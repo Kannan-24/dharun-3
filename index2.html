@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroSpace Sim: Advanced Rocket Lab</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-color: #1e1e1e;
+            --accent-color: #00bcd4;
+            --text-color: #e0e0e0;
+            --danger-color: #ff5252;
+            --success-color: #69f0ae;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: #000;
+            padding: 10px 20px;
+            border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-bar {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+        }
+
+        /* --- TABS --- */
+        .tabs {
+            display: flex;
+            background: #222;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        /* --- MAIN LAYOUT --- */
+        #workspace {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        /* SIDEBAR CONTROLS */
+        .sidebar {
+            width: 320px;
+            background: var(--panel-color);
+            border-right: 1px solid #333;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-group {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .control-header {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #aaa;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .val-display {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        button.primary-btn {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button.primary-btn:hover {
+            background: #00acc1;
+            box-shadow: 0 0 10px rgba(0, 188, 212, 0.4);
+        }
+
+        button.secondary-btn {
+            background: #444;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* VIEWPORT */
+        .viewport {
+            flex: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #2b32b2 0%, #1488cc 100%);
+            overflow: hidden;
+        }
+
+        #flight-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* OVERLAYS */
+        .overlay-stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            width: 200px;
+            pointer-events: none;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .stat-label {
+            color: #888;
+        }
+
+        /* ANALYSIS TAB SPECIFIC */
+        #analysis-view {
+            display: none;
+            flex: 1;
+            padding: 20px;
+            background: #111;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .chart-container {
+            height: 250px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 6px;
+            position: relative;
+            padding: 10px;
+        }
+
+        .chart-title {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        canvas.chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* STABILITY INDICATOR */
+        #stability-msg {
+            font-size: 0.8rem;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .stable {
+            background: rgba(105, 240, 174, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .unstable {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>AeroSpace <span style="color:var(--accent-color)">LABS</span></h1>
+        <div class="status-bar" id="global-status">SYSTEM READY</div>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('design')">1. Design</button>
+        <button class="tab-btn" onclick="switchTab('flight')">2. Flight Simulation</button>
+        <button class="tab-btn" onclick="switchTab('analysis')">3. Data Analysis</button>
+    </div>
+
+    <div id="workspace">
+
+        <div class="sidebar">
+
+            <div id="controls-design">
+                <div class="control-group">
+                    <span class="control-header">Nose Cone Geometry</span>
+                    <label>Length (m) <span class="val-display" id="d-nose-l">0.5</span></label>
+                    <input type="range" min="0.1" max="2.0" step="0.1" value="0.5"
+                        oninput="updateDesign('noseL', this.value)">
+
+                    <label>Base Width (m) <span class="val-display" id="d-width">0.3</span></label>
+                    <input type="range" min="0.1" max="1.0" step="0.05" value="0.3"
+                        oninput="updateDesign('width', this.value)">
+                </div>
+
+                <div class="control-group">
+                    <span class="control-header">Body Configuration</span>
+                    <label>Tube Length (m) <span class="val-display" id="d-body-l">2.0</span></label>
+                    <input type="range" min="1.0" max="10.0" step="0.5" value="2.0"
+                        oninput="updateDesign('bodyL', this.value)">
+
+                    <label>Material Mass (kg) <span class="val-display" id="d-mass">50</span></label>
+                    <input type="range" min="10" max="500" step="10" value="50"
+                        oninput="updateDesign('mass', this.value)">
+                </div>
+
+                <div class="control-group">
+                    <span class="control-header">Fin Aerodynamics</span>
+                    <label>Fin Span (m) <span class="val-display" id="d-fin-s">0.4</span></label>
+                    <input type="range" min="0.1" max="1.5" step="0.1" value="0.4"
+                        oninput="updateDesign('finS', this.value)">
+
+                    <label>Fin Root Chord (m) <span class="val-display" id="d-fin-c">0.4</span></label>
+                    <input type="range" min="0.1" max="1.0" step="0.1" value="0.4"
+                        oninput="updateDesign('finC', this.value)">
+                </div>
+
+                <div class="control-group">
+                    <span class="control-header">Stability Analysis</span>
+                    <div class="stat-row"><span class="stat-label">Center of Gravity (CG):</span> <span id="calc-cg">0.0
+                            m</span></div>
+                    <div class="stat-row"><span class="stat-label">Center of Pressure (CP):</span> <span
+                            id="calc-cp">0.0 m</span></div>
+                    <div id="stability-msg" class="stable">STABLE CONFIGURATION</div>
+                </div>
+            </div>
+
+            <div id="controls-flight" style="display: none;">
+                <div class="control-group">
+                    <span class="control-header">Propulsion System</span>
+                    <label>Total Impulse (N·s) <span class="val-display" id="f-impulse">10000</span></label>
+                    <input type="range" min="1000" max="50000" step="1000" value="10000"
+                        oninput="updateFlight('impulse', this.value)">
+
+                    <label>Avg Thrust (N) <span class="val-display" id="f-thrust">2000</span></label>
+                    <input type="range" min="500" max="10000" step="500" value="2000"
+                        oninput="updateFlight('thrust', this.value)">
+
+                    <label>Fuel Mass (kg) <span class="val-display" id="f-fuel">50</span></label>
+                    <input type="range" min="10" max="200" step="5" value="50"
+                        oninput="updateFlight('fuel', this.value)">
+                </div>
+
+                <div class="control-group">
+                    <span class="control-header">Launch Site</span>
+                    <label>Launch Angle (deg) <span class="val-display" id="f-angle">90</span></label>
+                    <input type="range" min="45" max="90" step="1" value="90"
+                        oninput="updateFlight('angle', this.value)">
+                </div>
+
+                <button class="primary-btn" id="btn-launch" onclick="launchRocket()">INITIATE LAUNCH</button>
+                <button class="secondary-btn" onclick="resetSim()">RESET SIMULATION</button>
+            </div>
+
+            <div id="controls-analysis" style="display: none;">
+                <div class="control-group">
+                    <span class="control-header">Data Export</span>
+                    <p style="font-size:0.8rem; color:#888;">Flight data recorded at 100Hz.</p>
+                    <button class="secondary-btn" onclick="exportData()">Download CSV</button>
+                </div>
+                <div class="control-group">
+                    <div class="stat-row"><span class="stat-label">Max Altitude:</span> <span id="res-alt">0 m</span>
+                    </div>
+                    <div class="stat-row"><span class="stat-label">Max Velocity:</span> <span id="res-vel">0 m/s</span>
+                    </div>
+                    <div class="stat-row"><span class="stat-label">Max G-Force:</span> <span id="res-acc">0 g</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="viewport" id="sim-view">
+            <canvas id="flight-canvas"></canvas>
+            <div class="overlay-stats">
+                <div class="stat-row"><span class="stat-label">ALT:</span> <span id="hud-alt">0.0 m</span></div>
+                <div class="stat-row"><span class="stat-label">VEL:</span> <span id="hud-vel">0.0 m/s</span></div>
+                <div class="stat-row"><span class="stat-label">ACC:</span> <span id="hud-acc">0.0 m/s²</span></div>
+                <div class="stat-row"><span class="stat-label">FUEL:</span> <span id="hud-fuel">100%</span></div>
+                <div class="stat-row"><span class="stat-label">TIME:</span> <span id="hud-time">T+ 0.0s</span></div>
+            </div>
+        </div>
+
+        <div id="analysis-view">
+            <div class="chart-container">
+                <span class="chart-title">ALTITUDE (m) vs TIME (s)</span>
+                <canvas id="chart-alt" class="chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <span class="chart-title">VELOCITY (m/s) vs TIME (s)</span>
+                <canvas id="chart-vel" class="chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <span class="chart-title">ACCELERATION (m/s²) vs TIME (s)</span>
+                <canvas id="chart-acc" class="chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /**
+         * --------------------------------------------------------
+         * ADVANCED ROCKET PHYSICS ENGINE
+         * --------------------------------------------------------
+         */
+
+        const CONSTANTS = {
+            g: 9.80665,
+            rho_sl: 1.225, // Sea level air density
+            scale_h: 8500  // Scale height for atmosphere
+        };
+
+        // Application State
+        const STATE = {
+            mode: 'design', // design, flight, analysis
+            simulating: false,
+            dt: 0.016, // 60hz physics
+
+            // Rocket Design Parameters
+            design: {
+                noseL: 0.5,
+                bodyL: 2.0,
+                width: 0.3,
+                massDry: 50,
+                finS: 0.4,
+                finC: 0.4,
+                cd: 0.5 // Base drag coefficient
+            },
+
+            // Flight Parameters
+            flight: {
+                impulse: 10000,
+                thrust: 2000,
+                fuelMass: 50,
+                angle: 90
+            },
+
+            // Current Physics State
+            phy: {
+                t: 0,
+                pos: { x: 0, y: 0 },
+                vel: { x: 0, y: 0 },
+                acc: { x: 0, y: 0 },
+                massCur: 0,
+                burnTime: 0
+            },
+
+            history: [] // Data logging
+        };
+
+        // DOM Elements cache
+        const DOM = {};
+        ['d-nose-l', 'd-body-l', 'd-width', 'd-mass', 'd-fin-s', 'd-fin-c',
+            'f-impulse', 'f-thrust', 'f-fuel', 'f-angle',
+            'hud-alt', 'hud-vel', 'hud-acc', 'hud-fuel', 'hud-time',
+            'calc-cg', 'calc-cp', 'stability-msg',
+            'flight-canvas', 'chart-alt', 'chart-vel', 'chart-acc'
+        ].forEach(id => DOM[id] = document.getElementById(id));
+
+        const ctx = DOM['flight-canvas'].getContext('2d');
+        let animFrame;
+
+        /* --- INITIALIZATION --- */
+        function init() {
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            updateDesignStats();
+            drawRocketDesign(); // Draw initial static rocket
+        }
+
+        function resizeCanvas() {
+            DOM['flight-canvas'].width = DOM['flight-canvas'].parentElement.offsetWidth;
+            DOM['flight-canvas'].height = DOM['flight-canvas'].parentElement.offsetHeight;
+
+            // Charts
+            ['chart-alt', 'chart-vel', 'chart-acc'].forEach(id => {
+                const c = document.getElementById(id);
+                c.width = c.parentElement.offsetWidth;
+                c.height = c.parentElement.offsetHeight;
+            });
+
+            if (!STATE.simulating && STATE.mode === 'design') drawRocketDesign();
+        }
+
+        /* --- TABS & UI --- */
+        function switchTab(mode) {
+            STATE.mode = mode;
+
+            // UI Toggles
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Panel Toggles
+            document.getElementById('controls-design').style.display = mode === 'design' ? 'block' : 'none';
+            document.getElementById('controls-flight').style.display = mode === 'flight' ? 'block' : 'none';
+            document.getElementById('controls-analysis').style.display = mode === 'analysis' ? 'block' : 'none';
+
+            // Viewport Toggles
+            document.getElementById('sim-view').style.display = mode === 'analysis' ? 'none' : 'flex';
+            document.getElementById('analysis-view').style.display = mode === 'analysis' ? 'flex' : 'none';
+
+            // Logic
+            if (mode === 'design') {
+                resetSim();
+                drawRocketDesign();
+            }
+            if (mode === 'flight') {
+                if (!STATE.simulating && STATE.phy.t === 0) drawEnvironment();
+            }
+            if (mode === 'analysis') {
+                renderCharts();
+                calculateSummary();
+            }
+        }
+
+        function updateDesign(param, val) {
+            STATE.design[param] = parseFloat(val);
+            document.getElementById('d-' + param.replace(/[A-Z]/g, m => "-" + m.toLowerCase())).innerText = val;
+            updateDesignStats();
+            drawRocketDesign();
+        }
+
+        function updateFlight(param, val) {
+            STATE.flight[param] = parseFloat(val);
+            document.getElementById('f-' + param).innerText = val;
+        }
+
+        /* --- PHYSICS CORE --- */
+        function updateDesignStats() {
+            // Simplified Barrowman Equations approximation
+            const d = STATE.design;
+
+            // Calculate CP (Center of Pressure) - dist from nose tip
+            // Fins pull CP back, Long nose pushes CP back slightly
+            const cp_nose = d.noseL * 0.666;
+            const area_nose = d.width * d.noseL;
+            const area_fins = d.finS * d.finC * 2; // 2 fins visible in profile
+            const cp_fins = d.noseL + d.bodyL + (d.finC / 2); // Approx at fin midpoint
+
+            const total_area = area_nose + (d.width * d.bodyL) + area_fins;
+            const cp = ((cp_nose * area_nose) + ((d.noseL + d.bodyL / 2) * (d.width * d.bodyL)) + (cp_fins * area_fins)) / total_area;
+
+            // Calculate CG (Center of Gravity)
+            // Assuming engine is heavy at back
+            const m_struct = d.massDry;
+            const m_fuel = STATE.flight.fuelMass; // Fuel at bottom
+            const cg_struct = (d.noseL + d.bodyL) * 0.4; // Slightly front heavy structure
+            const cg_fuel = d.noseL + d.bodyL - 0.2; // Fuel at very bottom
+
+            const cg = ((cg_struct * m_struct) + (cg_fuel * m_fuel)) / (m_struct + m_fuel);
+
+            DOM['calc-cg'].innerText = cg.toFixed(2) + " m";
+            DOM['calc-cp'].innerText = cp.toFixed(2) + " m";
+
+            // Stability
+            const margin = cp - cg; // Positive means CP is behind CG (Stable)
+            const msg = DOM['stability-msg'];
+            if (margin > 0) {
+                msg.innerText = "STABLE (Margin: " + margin.toFixed(2) + "m)";
+                msg.className = "stable";
+            } else {
+                msg.innerText = "UNSTABLE (Rocket will flip)";
+                msg.className = "unstable";
+            }
+        }
+
+        function launchRocket() {
+            if (STATE.simulating) return;
+
+            // Reset Physics
+            STATE.phy.t = 0;
+            STATE.phy.pos = { x: 0, y: 0 };
+            STATE.phy.vel = { x: 0, y: 0 };
+            STATE.phy.acc = { x: 0, y: 0 };
+            STATE.phy.massCur = STATE.design.massDry + STATE.flight.fuelMass;
+
+            // Calc burn parameters
+            // Impulse = Thrust * Time => Time = Impulse / Thrust
+            STATE.phy.burnTime = STATE.flight.impulse / STATE.flight.thrust;
+
+            STATE.history = [];
+            STATE.simulating = true;
+
+            document.getElementById('global-status').innerText = "STATUS: IN FLIGHT";
+            document.getElementById('btn-launch').innerText = "FLIGHT IN PROGRESS...";
+
+            loop();
+        }
+
+        function loop() {
+            if (!STATE.simulating) return;
+
+            // 1. Environment
+            const alt = STATE.phy.pos.y;
+            const rho = CONSTANTS.rho_sl * Math.exp(-alt / CONSTANTS.scale_h); // Barometric formula
+
+            // 2. Forces
+            let thrust = 0;
+            if (STATE.phy.t < STATE.phy.burnTime) {
+                thrust = STATE.flight.thrust;
+                // Mass depletion
+                const burnRate = STATE.flight.fuelMass / STATE.phy.burnTime;
+                STATE.phy.massCur -= burnRate * STATE.dt;
+            }
+
+            const vSq = (STATE.phy.vel.x ** 2 + STATE.phy.vel.y ** 2);
+            const vMag = Math.sqrt(vSq);
+
+            // Drag = 0.5 * rho * v^2 * Cd * A
+            // Using reference area of base
+            const area = Math.PI * (STATE.design.width / 2) ** 2;
+            const dragMag = 0.5 * rho * vSq * STATE.design.cd * area;
+
+            // Decompose Drag (opposing motion)
+            let dragX = 0, dragY = 0;
+            if (vMag > 0) {
+                dragX = -dragMag * (STATE.phy.vel.x / vMag);
+                dragY = -dragMag * (STATE.phy.vel.y / vMag);
+            }
+
+            // Gravity
+            const gravY = -STATE.phy.massCur * CONSTANTS.g;
+
+            // Thrust vectoring (Simplified: Launch angle dictates initial, then follows velocity roughly for gravity turn if we implemented full 2D, but here we do 1.5D logic for simplicity)
+            const rads = (STATE.flight.angle * Math.PI) / 180;
+            let thrustX = thrust * Math.cos(rads);
+            let thrustY = thrust * Math.sin(rads);
+
+            // If rocket is moving fast, it tends to fly into the wind (velocity vector), but for this simple sim, we stick to fixed angle thrust for initial burn
+
+            // Sum Forces
+            const fX = thrustX + dragX;
+            const fY = thrustY + dragY + gravY;
+
+            // Newton's Second Law
+            STATE.phy.acc.x = fX / STATE.phy.massCur;
+            STATE.phy.acc.y = fY / STATE.phy.massCur;
+
+            // Integrate
+            STATE.phy.vel.x += STATE.phy.acc.x * STATE.dt;
+            STATE.phy.vel.y += STATE.phy.acc.y * STATE.dt;
+
+            STATE.phy.pos.x += STATE.phy.vel.x * STATE.dt;
+            STATE.phy.pos.y += STATE.phy.vel.y * STATE.dt;
+
+            STATE.phy.t += STATE.dt;
+
+            // Collision Check
+            if (STATE.phy.pos.y <= 0 && STATE.phy.t > 0.5) {
+                STATE.phy.pos.y = 0;
+                STATE.phy.vel.y = 0;
+                STATE.phy.vel.x = 0;
+                STATE.simulating = false;
+                document.getElementById('global-status').innerText = "STATUS: TOUCHDOWN / CRASH";
+                document.getElementById('btn-launch').innerText = "LAUNCH AGAIN";
+                switchTab('analysis'); // Auto go to analysis
+            }
+
+            // Recording
+            if (STATE.phy.t % 0.1 < STATE.dt) {
+                STATE.history.push({
+                    t: STATE.phy.t,
+                    alt: STATE.phy.pos.y,
+                    vel: vMag,
+                    acc: Math.sqrt(STATE.phy.acc.x ** 2 + STATE.phy.acc.y ** 2)
+                });
+            }
+
+            // Render & HUD
+            drawEnvironment();
+            updateHUD();
+
+            if (STATE.simulating) {
+                animFrame = requestAnimationFrame(loop);
+            }
+        }
+
+        function resetSim() {
+            STATE.simulating = false;
+            cancelAnimationFrame(animFrame);
+            STATE.phy.t = 0;
+            STATE.phy.pos.y = 0;
+            document.getElementById('btn-launch').innerText = "INITIATE LAUNCH";
+            document.getElementById('global-status').innerText = "STATUS: READY";
+            drawEnvironment();
+        }
+
+        function updateHUD() {
+            DOM['hud-alt'].innerText = STATE.phy.pos.y.toFixed(1) + " m";
+            const v = Math.sqrt(STATE.phy.vel.x ** 2 + STATE.phy.vel.y ** 2);
+            DOM['hud-vel'].innerText = v.toFixed(1) + " m/s";
+
+            const a = Math.sqrt(STATE.phy.acc.x ** 2 + STATE.phy.acc.y ** 2);
+            DOM['hud-acc'].innerText = a.toFixed(1) + " m/s²";
+
+            let fuelPct = 0;
+            if (STATE.phy.t < STATE.phy.burnTime) {
+                fuelPct = 100 * (1 - (STATE.phy.t / STATE.phy.burnTime));
+            }
+            DOM['hud-fuel'].innerText = fuelPct.toFixed(0) + "%";
+            DOM['hud-time'].innerText = "T+ " + STATE.phy.t.toFixed(1) + "s";
+        }
+
+        /* --- VISUALIZATION ENGINE --- */
+
+        // Draws the static blueprint in Design Mode
+        function drawRocketDesign() {
+            const w = DOM['flight-canvas'].width;
+            const h = DOM['flight-canvas'].height;
+
+            // Clear background
+            ctx.fillStyle = "#1e1e1e"; // Blueprint blue/grey
+            ctx.fillRect(0, 0, w, h);
+
+            // Grid
+            ctx.strokeStyle = "rgba(255,255,255,0.05)";
+            ctx.beginPath();
+            for (let i = 0; i < w; i += 20) { ctx.moveTo(i, 0); ctx.lineTo(i, h); }
+            for (let i = 0; i < h; i += 20) { ctx.moveTo(0, i); ctx.lineTo(w, i); }
+            ctx.stroke();
+
+            // Scale logic
+            const scale = 100; // pixels per meter
+            const cx = w / 2;
+            const cy = h / 2 + 100;
+
+            const d = STATE.design;
+            const pxNose = d.noseL * scale;
+            const pxBody = d.bodyL * scale;
+            const pxWidth = d.width * scale;
+            const pxFinS = d.finS * scale;
+            const pxFinC = d.finC * scale;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(-Math.PI / 2); // Point up
+
+            // Draw Fins
+            ctx.fillStyle = "#D32F2F";
+            ctx.beginPath();
+            // Left Fin
+            ctx.moveTo(0, -pxWidth / 2);
+            ctx.lineTo(-pxFinC, -(pxWidth / 2 + pxFinS));
+            ctx.lineTo(0, -(pxWidth / 2 + pxFinS));
+            ctx.fill();
+            // Right Fin
+            ctx.beginPath();
+            ctx.moveTo(0, pxWidth / 2);
+            ctx.lineTo(-pxFinC, (pxWidth / 2 + pxFinS));
+            ctx.lineTo(0, (pxWidth / 2 + pxFinS));
+            ctx.fill();
+
+            // Draw Body
+            ctx.fillStyle = "#E0E0E0";
+            ctx.fillRect(0, -pxWidth / 2, pxBody, pxWidth);
+
+            // Draw Nose
+            ctx.fillStyle = "#1976D2";
+            ctx.beginPath();
+            ctx.moveTo(pxBody, -pxWidth / 2);
+            ctx.lineTo(pxBody + pxNose, 0);
+            ctx.lineTo(pxBody, pxWidth / 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Dimensions Text
+            ctx.fillStyle = "#FFF";
+            ctx.font = "12px monospace";
+            ctx.fillText(`Total Length: ${(d.noseL + d.bodyL).toFixed(2)}m`, cx - 50, cy + 120);
+        }
+
+        // Draws the animation in Flight Mode
+        function drawEnvironment() {
+            const w = DOM['flight-canvas'].width;
+            const h = DOM['flight-canvas'].height;
+
+            // Sky Gradient based on altitude
+            const alt = STATE.phy.pos.y;
+            let r = 20, g = 136, b = 204; // Blue sky
+            if (alt > 5000) { r = 0; g = 0; b = 50; } // Space
+            else if (alt > 1000) {
+                const t = (alt - 1000) / 4000;
+                r = 20 * (1 - t); g = 136 * (1 - t); b = 204 - (154 * t);
+            }
+
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(0, 0, w, h);
+
+            // Ground
+            // We scroll the ground down
+            const camY = alt * 2; // scale factor
+            const groundY = h - 50 + camY;
+
+            if (groundY > 0) {
+                ctx.fillStyle = "#4CAF50";
+                ctx.fillRect(0, groundY, w, h - groundY);
+            }
+
+            // Clouds
+            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            for (let i = 0; i < 5; i++) {
+                const cy = (h / 2) - (alt * 2) + (i * 200);
+                if (cy > -100 && cy < h) {
+                    ctx.beginPath();
+                    ctx.arc(100 + i * 150, cy, 30, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Rocket
+            // Always centered X, Y varies but capped
+            const rx = w / 2;
+            const ry = groundY - 20;
+            const screenY = ry < h / 2 ? h / 2 : ry; // Camera follow
+
+            ctx.save();
+            ctx.translate(rx, screenY);
+
+            // Rotation based on velocity vector (simple approximation)
+            let rot = -Math.PI / 2; // pointing up
+            // In a real sim we'd use atan2 of velocity
+
+            ctx.rotate(rot);
+
+            // Simple Rocket Sprite
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(-20, -10, 40, 20); // Body
+            ctx.fillStyle = "red";
+            ctx.beginPath(); ctx.moveTo(20, -10); ctx.lineTo(40, 0); ctx.lineTo(20, 10); ctx.fill(); // Nose
+
+            // Flame
+            if (STATE.phy.t < STATE.phy.burnTime) {
+                ctx.fillStyle = "orange";
+                ctx.beginPath();
+                ctx.moveTo(-20, -5);
+                ctx.lineTo(-40 - Math.random() * 20, 0);
+                ctx.lineTo(-20, 5);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        /* --- ANALYSIS & CHARTS --- */
+        function calculateSummary() {
+            if (STATE.history.length === 0) return;
+
+            const maxAlt = Math.max(...STATE.history.map(d => d.alt));
+            const maxVel = Math.max(...STATE.history.map(d => d.vel));
+            const maxAcc = Math.max(...STATE.history.map(d => d.acc));
+
+            DOM['res-alt'].innerText = maxAlt.toFixed(1) + " m";
+            DOM['res-vel'].innerText = maxVel.toFixed(1) + " m/s";
+            DOM['res-acc'].innerText = (maxAcc / CONSTANTS.g).toFixed(1) + " g";
+        }
+
+        function renderCharts() {
+            if (STATE.history.length < 2) return;
+            drawChart('chart-alt', 'alt', '#69f0ae');
+            drawChart('chart-vel', 'vel', '#40c4ff');
+            drawChart('chart-acc', 'acc', '#ff5252');
+        }
+
+        function drawChart(canvasId, key, color) {
+            const c = document.getElementById(canvasId);
+            const cx = c.getContext('2d');
+            const w = c.width;
+            const h = c.height;
+
+            cx.clearRect(0, 0, w, h);
+
+            // Find ranges
+            const data = STATE.history;
+            const maxVal = Math.max(...data.map(d => d[key]));
+            const maxTime = data[data.length - 1].t;
+
+            cx.beginPath();
+            cx.strokeStyle = color;
+            cx.lineWidth = 2;
+
+            for (let i = 0; i < data.length; i++) {
+                const x = (data[i].t / maxTime) * w;
+                const y = h - ((data[i][key] / maxVal) * (h - 20)) - 10; // Padding
+                if (i === 0) cx.moveTo(x, y);
+                else cx.lineTo(x, y);
+            }
+            cx.stroke();
+
+            // Simple Grid
+            cx.strokeStyle = "rgba(255,255,255,0.1)";
+            cx.beginPath();
+            cx.moveTo(0, h / 2); cx.lineTo(w, h / 2);
+            cx.stroke();
+
+            // Max label
+            cx.fillStyle = color;
+            cx.font = "10px monospace";
+            cx.fillText(maxVal.toFixed(1), 5, 15);
+        }
+
+        function exportData() {
+            let csv = "Time,Altitude,Velocity,Acceleration\n";
+            STATE.history.forEach(row => {
+                csv += `${row.t.toFixed(3)},${row.alt.toFixed(2)},${row.vel.toFixed(2)},${row.acc.toFixed(2)}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "rocket_flight_data.csv";
+            a.click();
+        }
+
+        // Start
+        init();
+
+    </script>
+</body>
+
+</html>

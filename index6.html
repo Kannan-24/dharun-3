@@ -1,0 +1,3609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramaiah Institute of Technology - RARF Conference Management Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --primary-color: #004d99;
+            /* Dark blue - RARF primary */
+            --secondary-color: #0066cc;
+            /* Medium blue - RARF secondary */
+            --accent-color: #ff9900;
+            /* Orange - Highlight */
+            --text-color: #333;
+            --light-bg: #f5f7fa;
+            /* Very light gray */
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            /* Light blue for info badges/buttons */
+        }
+
+        /* Global Body and Font Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Enhanced background for a professional, aerospace-themed feel */
+            background: linear-gradient(135deg, var(--light-bg) 0%, #e0e6ed 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            background-size: 200% 200%;
+            /* For subtle animation effect */
+            animation: gradientShift 15s ease infinite;
+            /* Gentle background animation */
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Utility classes */
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flex-item {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        /* Header Styles - Branding for Ramaiah Institute of Technology */
+        .header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2em;
+            /* Slightly larger for prominence */
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            /* Stack text for clarity */
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .header h1 span {
+            font-size: 0.6em;
+            /* Smaller for sub-text */
+            opacity: 0.9;
+            font-weight: 300;
+            margin-top: 2px;
+        }
+
+        /* Navigation Styles */
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navbar li {
+            margin-left: 28px;
+            /* Increased spacing */
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1.15em;
+            /* Slightly larger nav links */
+            padding: 5px 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: var(--accent-color);
+        }
+
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            /* Thicker underline */
+            background-color: var(--accent-color);
+            bottom: -8px;
+            /* More prominent underline position */
+            left: 0;
+            transition: width 0.3s ease;
+        }
+
+        .navbar a:hover::after,
+        .navbar a.active::after {
+            width: 100%;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            /* Allows content to take up available space */
+            padding: 30px 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            /* Slightly more rounded corners */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            /* Stronger shadow */
+            padding: 30px;
+            /* More padding */
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            font-size: 1.6em;
+            /* Larger header */
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            /* More space below header */
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header .action-button {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 10px 18px;
+            /* Larger buttons */
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header .action-button:hover {
+            background-color: #e68a00;
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard specific styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .metric-card .icon {
+            font-size: 3.2em;
+            /* Slightly larger icons */
+            color: var(--secondary-color);
+            margin-bottom: 12px;
+        }
+
+        .metric-card .value {
+            font-size: 2.8em;
+            /* Larger values */
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .metric-card .label {
+            font-size: 1.15em;
+            /* Larger labels */
+            color: #666;
+        }
+
+        .recent-activity ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recent-activity li {
+            padding: 15px 0;
+            /* More padding */
+            border-bottom: 1px solid var(--border-color);
+            /* Solid border */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            /* Align to top for multi-line details */
+            font-size: 0.98em;
+        }
+
+        .recent-activity li:last-child {
+            border-bottom: none;
+        }
+
+        .recent-activity .activity-type {
+            font-weight: 700;
+            color: var(--secondary-color);
+            min-width: 100px;
+            /* Ensure type has enough space */
+        }
+
+        .recent-activity .activity-details {
+            color: #555;
+            flex-grow: 1;
+            margin-left: 15px;
+            /* More spacing */
+        }
+
+        .recent-activity .activity-time {
+            font-size: 0.88em;
+            color: #888;
+            white-space: nowrap;
+            /* Prevent breaking */
+            margin-left: 10px;
+        }
+
+        /* Forms Styles */
+        .form-group {
+            margin-bottom: 22px;
+            /* Increased margin */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="number"],
+        .form-group input[type="file"],
+        .form-group textarea,
+        .form-group select {
+            width: calc(100% - 24px);
+            /* Account for padding and border */
+            padding: 13px;
+            /* Larger padding */
+            border: 1px solid var(--border-color);
+            border-radius: 7px;
+            /* Slightly more rounded */
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group input[type="file"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.2);
+            /* Enhanced focus ring */
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 140px;
+            /* Taller text areas */
+        }
+
+        .checkbox-group label {
+            display: inline-block;
+            margin-right: 18px;
+            font-weight: normal;
+        }
+
+        .submit-button {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 14px 28px;
+            /* Larger buttons */
+            border: none;
+            border-radius: 7px;
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: auto;
+            display: block;
+            margin-top: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            /* More space above table */
+            font-size: 0.98em;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid var(--border-color);
+            padding: 14px 18px;
+            /* More padding */
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: var(--primary-color);
+            color: #fff;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            text-transform: uppercase;
+            /* Uppercase headers */
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f1f1f1;
+            box-shadow: inset 3px 0 0 0 var(--secondary-color);
+            /* Hover highlight */
+        }
+
+        .data-table .status-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            /* Larger badges */
+            border-radius: 5px;
+            font-size: 0.88em;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge.submitted {
+            background-color: var(--secondary-color);
+        }
+
+        .status-badge.under-review {
+            background-color: var(--warning-color);
+            color: #333;
+        }
+
+        .status-badge.accepted {
+            background-color: var(--success-color);
+        }
+
+        .status-badge.rejected {
+            background-color: var(--danger-color);
+        }
+
+        .status-badge.assigned {
+            background-color: var(--info-color);
+        }
+
+        .status-badge.completed {
+            background-color: var(--success-color);
+        }
+
+        .status-badge.pending {
+            background-color: #6c757d;
+        }
+
+        /* Gray */
+
+        /* Pagination styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 35px;
+            /* More margin */
+            gap: 8px;
+            /* More gap */
+        }
+
+        .pagination a,
+        .pagination span {
+            display: block;
+            padding: 11px 16px;
+            /* Larger pagination buttons */
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        }
+
+        .pagination a:hover {
+            background-color: var(--secondary-color);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .pagination .current-page {
+            background-color: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Action Buttons within tables */
+        .data-table .action-btn {
+            background-color: #6c757d;
+            /* Default gray */
+            color: #fff;
+            padding: 7px 12px;
+            border-radius: 5px;
+            font-size: 0.88em;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-right: 5px;
+            min-width: 80px;
+            /* Consistent width for buttons */
+        }
+
+        .data-table .action-btn:last-child {
+            margin-right: 0;
+        }
+
+        .data-table .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .data-table .action-btn.view {
+            background-color: var(--info-color);
+        }
+
+        .data-table .action-btn.edit {
+            background-color: var(--accent-color);
+        }
+
+        .data-table .action-btn.delete {
+            background-color: var(--danger-color);
+        }
+
+        .data-table .action-btn.upload {
+            background-color: var(--success-color);
+        }
+
+        .data-table .action-btn.assign {
+            background-color: var(--secondary-color);
+        }
+
+        .data-table .action-btn.start {
+            background-color: var(--warning-color);
+            color: #333;
+        }
+
+        .data-table .action-btn.monitor {
+            background-color: #5bc0de;
+        }
+
+        /* Bootstrap info */
+
+
+        /* Reviewer Assignment specific */
+        .reviewer-selection {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reviewer-selection select {
+            flex-grow: 1;
+        }
+
+        /* Schedule specific */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 120px repeat(3, 1fr);
+            /* Time | Day 1 | Day 2 | Day 3 - Wider time slot */
+            gap: 2px;
+            /* Slightly more visible gaps */
+            background-color: var(--border-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .schedule-grid-header,
+        .schedule-cell {
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            /* Add internal borders */
+            border-right: 1px solid var(--border-color);
+        }
+
+        .schedule-grid-header:last-child,
+        .schedule-cell:nth-child(4n) {
+            border-right: none;
+            /* No right border on last column */
+        }
+
+        .schedule-cell:nth-last-child(-n+4) {
+            border-bottom: none;
+            /* No bottom border on last row */
+        }
+
+        .schedule-cell {
+            font-weight: normal;
+            color: var(--text-color);
+            background-color: #fff;
+            min-height: 85px;
+            /* Ensure cells have a minimum height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .schedule-cell:hover {
+            background-color: #f9f9f9;
+            transform: translateY(-2px);
+        }
+
+        .time-slot {
+            font-weight: 700;
+            background-color: #e6eef7;
+            /* Lighter primary */
+            color: var(--primary-color);
+            font-size: 0.98em;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+            font-size: 1.05em;
+        }
+
+        .event-speaker {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .event-room {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        /* Detail Views for Submissions, Reviews, Admin management */
+        .detail-view-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Darker overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            /* Above header */
+            backdrop-filter: blur(5px);
+            /* Blurred background effect */
+            -webkit-backdrop-filter: blur(5px);
+            /* Safari support */
+        }
+
+        .detail-view-content {
+            background-color: var(--card-bg);
+            padding: 35px;
+            /* More padding */
+            border-radius: 12px;
+            /* More rounded */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            /* Stronger shadow */
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            /* Max height for scrollability */
+            overflow-y: auto;
+            /* Enable scrolling for long content */
+            position: relative;
+            animation: fadeInScale 0.3s ease-out forwards;
+            /* Entry animation */
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .detail-view-content .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.2s ease;
+        }
+
+        .detail-view-content .close-btn:hover {
+            color: var(--danger-color);
+        }
+
+        .detail-view-content h3 {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .detail-view-content p {
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        .detail-view-content strong {
+            color: var(--secondary-color);
+        }
+
+        .detail-section {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .detail-section h4 {
+            color: #555;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .detail-section ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .detail-section li {
+            background-color: var(--light-bg);
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .review-rating {
+            font-weight: 700;
+            color: var(--success-color);
+            margin-left: 10px;
+        }
+
+        .review-comment {
+            font-style: italic;
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.95em;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--primary-color);
+            color: #fff;
+            text-align: center;
+            padding: 25px 0;
+            /* More padding */
+            font-size: 0.95em;
+            margin-top: auto;
+            box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #fff;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .header h1 span {
+                font-size: 0.55em;
+            }
+
+            .navbar {
+                width: 100%;
+                margin-top: 15px;
+            }
+
+            .navbar ul {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .navbar li {
+                margin: 5px 15px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .card-header {
+                font-size: 1.4em;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            .metric-card .value {
+                font-size: 2.2em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .navbar ul {
+                flex-direction: column;
+                margin-top: 15px;
+            }
+
+            .navbar li {
+                margin: 5px 0;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 80px 1fr;
+                /* Time | All Days combined */
+            }
+
+            .schedule-grid-header:not(:first-child),
+            .schedule-cell:nth-child(4n-2),
+            .schedule-cell:nth-child(4n-1) {
+                display: none;
+                /* Hide Day 2 and Day 3 headers and cells in mobile */
+            }
+
+            .detail-view-content {
+                width: 95%;
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.3em;
+            }
+
+            .header h1 span {
+                font-size: 0.5em;
+            }
+
+            .navbar a {
+                font-size: 0.95em;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                padding: 10px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 12px;
+                font-size: 0.8em;
+            }
+
+            .status-badge {
+                padding: 4px 8px;
+                font-size: 0.7em;
+            }
+
+            .data-table .action-btn {
+                padding: 5px 8px;
+                font-size: 0.75em;
+                min-width: unset;
+            }
+
+            .recent-activity .activity-details {
+                margin-left: 5px;
+            }
+
+            .recent-activity .activity-type {
+                min-width: 70px;
+            }
+
+            .detail-view-content h3 {
+                font-size: 1.5em;
+            }
+
+            .detail-view-content p,
+            .detail-section li {
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1>Ramaiah Institute of Technology <span>RARF Conference Management Tool</span></h1>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="#dashboard" class="active" data-section="dashboard">Dashboard</a></li>
+                    <li><a href="#submission" data-section="submission">Submit Paper</a></li>
+                    <li><a href="#mysubmissions" data-section="mysubmissions">My Submissions</a></li>
+                    <li><a href="#review" data-section="review">Review Panel</a></li>
+                    <li><a href="#schedule" data-section="schedule">Conference Schedule</a></li>
+                    <li><a href="#admin" data-section="admin">Admin Panel</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+
+            <section id="dashboard" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        Dashboard Overview for RARF 2025
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="metric-card">
+                            <div class="icon">📄</div>
+                            <div class="value" id="totalSubmissions">150</div>
+                            <div class="label">Total Submissions</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon">✅</div>
+                            <div class="value" id="acceptedPapers">85</div>
+                            <div class="label">Accepted Papers</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon">👥</div>
+                            <div class="value" id="activeReviewers">35</div>
+                            <div class="label">Active Reviewers</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon">⏳</div>
+                            <div class="value" id="pendingReviews">60</div>
+                            <div class="label">Reviews Pending</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon">📅</div>
+                            <div class="value" id="upcomingEvents">7</div>
+                            <div class="label">Upcoming Events</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="icon">💡</div>
+                            <div class="value" id="registeredAttendees">450</div>
+                            <div class="label">Registered Attendees</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <div class="card recent-activity">
+                            <div class="card-header">
+                                Recent Activity Log
+                            </div>
+                            <ul>
+                                <li>
+                                    <span class="activity-type">Submission:</span>
+                                    <span class="activity-details">Paper "AI in Aerospace" submitted by Dr. Anya
+                                        Sharma.</span>
+                                    <span class="activity-time">5 minutes ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Review:</span>
+                                    <span class="activity-details">Review for "Advanced Propulsion" completed by Prof.
+                                        Ben Carter.</span>
+                                    <span class="activity-time">2 hours ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Assignment:</span>
+                                    <span class="activity-details">"Satellite Comm." assigned to Dr. Chloe Davis.</span>
+                                    <span class="activity-time">Yesterday</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Update:</span>
+                                    <span class="activity-details">Deadline for reviews extended to July 15th for all
+                                        RARF participants.</span>
+                                    <span class="activity-time">3 days ago</span>
+                                <li>
+                                    <span class="activity-type">Submission:</span>
+                                    <span class="activity-details">Paper "Quantum Computing in Aviation" submitted by
+                                        Ms. Eva Green.</span>
+                                    <span class="activity-time">4 days ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Review:</span>
+                                    <span class="activity-details">Review for "Hypersonic Flight Dynamics" completed by
+                                        Dr. Frank Miller.</span>
+                                    <span class="activity-time">1 week ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Assignment:</span>
+                                    <span class="activity-details">"Space Debris Tracking" assigned to Prof. Grace
+                                        Lee.</span>
+                                    <span class="activity-time">1 week ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Submission:</span>
+                                    <span class="activity-details">Paper "Aerodynamic Optimization" submitted by Mr.
+                                        Henry Wilson.</span>
+                                    <span class="activity-time">1 week ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Review:</span>
+                                    <span class="activity-details">Review for "UAV Swarm Control" completed by Dr. Ivy
+                                        King.</span>
+                                    <span class="activity-time">1.5 weeks ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Update:</span>
+                                    <span class="activity-details">RARF 2025 Conference registration opened. Early bird
+                                        discount available.</span>
+                                    <span class="activity-time">2 weeks ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Submission:</span>
+                                    <span class="activity-details">Paper "Sustainable Aviation Fuels" submitted by Dr.
+                                        Jack Adams.</span>
+                                    <span class="activity-time">2 weeks ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Assignment:</span>
+                                    <span class="activity-details">"AI in Air Traffic Control" assigned to Prof. Karen
+                                        Clark.</span>
+                                    <span class="activity-time">2 weeks ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Review:</span>
+                                    <span class="activity-details">Review for "Next-Gen Satellite Propulsion" completed
+                                        by Dr. Liam Nash.</span>
+                                    <span class="activity-time">2 weeks ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Submission:</span>
+                                    <span class="activity-details">Paper "Robotics in Space Assembly" submitted by Ms.
+                                        Maya Patel.</span>
+                                    <span class="activity-time">3 weeks ago</span>
+                                </li>
+                                <li>
+                                    <span class="activity-type">Update:</span>
+                                    <span class="activity-details">Call for Papers for RARF 2025 closed. Thank you for
+                                        your overwhelming response!</span>
+                                    <span class="activity-time">3 weeks ago</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex-item">
+                        <div class="card">
+                            <div class="card-header">
+                                Important Announcements from Ramaiah Institute of Technology
+                            </div>
+                            <ul>
+                                <li style="margin-bottom: 15px;"><strong>Reviewer Deadline Extension:</strong> The
+                                    deadline for all reviews has been extended to <strong>July 15, 2025</strong>. Please
+                                    ensure all assigned papers for RARF 2025 are reviewed by then.</li>
+                                <li style="margin-bottom: 15px;"><strong>Final Paper Submission:</strong> Authors of
+                                    accepted papers for RARF 2025 can now upload their final versions. Deadline for
+                                    final papers is <strong>August 1, 2025</strong>.</li>
+                                <li style="margin-bottom: 15px;"><strong>Conference Registration Open:</strong> Early
+                                    bird registration for RARF 2025 is now open until <strong>September 10,
+                                        2025</strong>. Register early to avail discounts!</li>
+                                <li style="margin-bottom: 15px;"><strong>New CFP for RARF 2026:</strong> We are already
+                                    planning for RARF 2026! The Call for Papers for next year's conference will be
+                                    released on <strong>October 1, 2025</strong>.</li>
+                                <li style="margin-bottom: 15px;"><strong>Volunteer Opportunities:</strong> We are
+                                    looking for student volunteers from Ramaiah Institute of Technology for the
+                                    conference. If interested, please contact the organizing committee by
+                                    <strong>September 20, 2025</strong>.</li>
+                                <li style="margin-bottom: 15px;"><strong>Keynote Speakers Announced:</strong> We are
+                                    thrilled to announce our keynote speakers for RARF 2025: Dr. Evelyn Reed from NASA
+                                    and Dr. Victor Zhou from SpaceX.</li>
+                                <li style="margin-bottom: 15px;"><strong>Sponsorship Opportunities:</strong> Companies
+                                    interested in sponsoring RARF 2025 can find details on our website or contact us
+                                    directly.</li>
+                                <li style="margin-bottom: 15px;"><strong>Travel Grant Applications:</strong> Limited
+                                    travel grants are available for student presenters. Application deadline is
+                                    <strong>August 15, 2025</strong>.</li>
+                                <li style="margin-bottom: 15px;"><strong>Poster Session Guidelines:</strong> Detailed
+                                    guidelines for poster presentations at RARF 2025 are now available on the conference
+                                    website.</li>
+                                <li style="margin-bottom: 15px;"><strong>Technical Program Committee Meeting:</strong>
+                                    The next TPC meeting is scheduled for July 20, 2025.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="submission" class="content-section" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        Submit Your Paper for RARF 2025
+                    </div>
+                    <form id="paperSubmissionForm">
+                        <p>Please ensure your submission adheres to the RARF 2025 guidelines and template. All papers
+                            must be original and not simultaneously submitted to another journal or conference.</p>
+                        <div class="form-group">
+                            <label for="paperTitle">Paper Title:</label>
+                            <input type="text" id="paperTitle" name="paperTitle"
+                                placeholder="e.g., Advances in Hypersonic Aerodynamics" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="authors">Authors (comma-separated, include affiliations):</label>
+                            <input type="text" id="authors" name="authors"
+                                placeholder="e.g., John Doe (Ramaiah Institute of Technology), Jane Smith (IIT B)"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="abstract">Abstract (max 250 words):</label>
+                            <textarea id="abstract" name="abstract"
+                                placeholder="Provide a concise summary of your paper, highlighting objectives, methods, results, and conclusions."
+                                rows="6" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="keywords">Keywords (comma-separated, max 5):</label>
+                            <input type="text" id="keywords" name="keywords"
+                                placeholder="e.g., UAV, AI, Control Systems, Space, Materials" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="topicArea">Select Primary Topic Area:</label>
+                            <select id="topicArea" name="topicArea" required>
+                                <option value="">-- Please Select Topic --</option>
+                                <option value="Aerodynamics and Fluid Mechanics">Aerodynamics and Fluid Mechanics
+                                </option>
+                                <option value="Propulsion and Power">Propulsion and Power</option>
+                                <option value="Structures and Materials">Structures and Materials</option>
+                                <option value="Flight Mechanics and Control">Flight Mechanics and Control</option>
+                                <option value="Space Systems and Technologies">Space Systems and Technologies</option>
+                                <option value="Unmanned Aerial Systems (UAS)">Unmanned Aerial Systems (UAS)</option>
+                                <option value="Avionics and Navigation">Avionics and Navigation</option>
+                                <option value="Aerospace Manufacturing">Aerospace Manufacturing</option>
+                                <option value="AI and Machine Learning in Aerospace">AI and Machine Learning in
+                                    Aerospace</option>
+                                <option value="Sustainable Aviation">Sustainable Aviation</option>
+                                <option value="Aerospace Safety and Security">Aerospace Safety and Security</option>
+                                <option value="Aerospace Management and Economics">Aerospace Management and Economics
+                                </option>
+                                <option value="Other Emerging Areas">Other Emerging Areas (specify in abstract)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="paperFile">Upload Full Paper (PDF only, max 10MB):</label>
+                            <input type="file" id="paperFile" name="paperFile" accept=".pdf" required>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="consent" name="consent" required> I confirm that this paper
+                                is original, has not been published elsewhere, and I agree to the <a href="#"
+                                    onclick="alert('RARF 2025 Conference Policies and Publication Ethics will be displayed here!'); return false;">RARF
+                                    2025 Terms and Conditions</a> of submission.
+                            </label>
+                        </div>
+                        <button type="submit" class="submit-button">Submit Paper to RARF 2025</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="mysubmissions" class="content-section" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        My Submitted Papers for RARF 2025
+                        <button class="action-button" onclick="loadSection('submission');">Submit New Paper</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Submission ID</th>
+                                <th>Title</th>
+                                <th>Main Author</th>
+                                <th>Topic</th>
+                                <th>Status</th>
+                                <th>Date Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RARF2025-001</td>
+                                <td>Integrated Avionics Systems for Next-Gen Aircraft</td>
+                                <td>Dr. Priya Sharma</td>
+                                <td>Avionics and Navigation</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-05-10</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-001', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-002</td>
+                                <td>Deep Learning Applications in Satellite Imagery Analysis</td>
+                                <td>Prof. Rohan Gupta</td>
+                                <td>Space Systems and Technologies</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>2025-05-12</td>
+                                <td><button class="action-btn upload"
+                                        onclick="showFinalSubmissionForm('RARF2025-002');">Upload Final</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-002', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-003</td>
+                                <td>Sustainable Aviation Fuels: Challenges and Opportunities</td>
+                                <td>Ms. Ananya Singh</td>
+                                <td>Sustainable Aviation</td>
+                                <td><span class="status-badge rejected">Rejected</span></td>
+                                <td>2025-05-15</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-003', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-004</td>
+                                <td>Advanced Materials for High-Temperature Aerospace Applications</td>
+                                <td>Dr. Sameer Khan</td>
+                                <td>Structures and Materials</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>2025-05-18</td>
+                                <td><button class="action-btn edit"
+                                        onclick="editSubmission('RARF2025-004');">Edit</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-004', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-005</td>
+                                <td>Optimizing UAV Swarm Communication Protocols</td>
+                                <td>Mr. Vikram Reddy</td>
+                                <td>Unmanned Aerial Systems (UAS)</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-05-20</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-005', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-006</td>
+                                <td>AI-Driven Predictive Maintenance for Aircraft Engines</td>
+                                <td>Dr. Kavya Rao</td>
+                                <td>AI and Machine Learning in Aerospace</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>2025-05-22</td>
+                                <td><button class="action-btn upload"
+                                        onclick="showFinalSubmissionForm('RARF2025-006');">Upload Final</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-006', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-007</td>
+                                <td>Computational Fluid Dynamics of Re-entry Vehicles</td>
+                                <td>Prof. Rajesh Kumar</td>
+                                <td>Aerodynamics and Fluid Mechanics</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-05-25</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-007', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-008</td>
+                                <td>Solid Rocket Motor Performance Optimization</td>
+                                <td>Dr. Fatima Ali</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>2025-05-28</td>
+                                <td><button class="action-btn edit"
+                                        onclick="editSubmission('RARF2025-008');">Edit</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-008', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-009</td>
+                                <td>Additive Manufacturing for Aerospace Components</td>
+                                <td>Mr. Gopal Iyengar</td>
+                                <td>Aerospace Manufacturing</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-05-30</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-009', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-010</td>
+                                <td>Cybersecurity Challenges in Modern Aircraft Systems</td>
+                                <td>Ms. Zara Patel</td>
+                                <td>Aerospace Safety and Security</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>2025-06-01</td>
+                                <td><button class="action-btn upload"
+                                        onclick="showFinalSubmissionForm('RARF2025-010');">Upload Final</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-010', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-011</td>
+                                <td>Aerodynamic Performance of Blended Wing Body Aircraft</td>
+                                <td>Dr. Nina Singh</td>
+                                <td>Aerodynamics and Fluid Mechanics</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-06-03</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-011', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-012</td>
+                                <td>Next-Generation Satellite Communication Systems</td>
+                                <td>Prof. Omar Hassan</td>
+                                <td>Space Systems and Technologies</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>2025-06-05</td>
+                                <td><button class="action-btn edit"
+                                        onclick="editSubmission('RARF2025-012');">Edit</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-012', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-013</td>
+                                <td>Intelligent Flight Control for Hypersonic Vehicles</td>
+                                <td>Dr. Pooja Verma</td>
+                                <td>Flight Mechanics and Control</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-06-07</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-013', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-014</td>
+                                <td>Fatigue Life Prediction of Composite Aircraft Structures</td>
+                                <td>Mr. Rahul Dev</td>
+                                <td>Structures and Materials</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>2025-06-09</td>
+                                <td><button class="action-btn edit"
+                                        onclick="editSubmission('RARF2025-014');">Edit</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-014', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-015</td>
+                                <td>UAV-Based Remote Sensing for Environmental Monitoring</td>
+                                <td>Ms. Shruti Sharma</td>
+                                <td>Unmanned Aerial Systems (UAS)</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>2025-06-11</td>
+                                <td><button class="action-btn upload"
+                                        onclick="showFinalSubmissionForm('RARF2025-015');">Upload Final</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-015', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-016</td>
+                                <td>Biomimetic Wing Design for Micro-Aerial Vehicles</td>
+                                <td>Dr. Tarun Singh</td>
+                                <td>Aerodynamics and Fluid Mechanics</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-06-13</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-016', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-017</td>
+                                <td>Development of Hybrid-Electric Aircraft Propulsion Systems</td>
+                                <td>Prof. Uma Shankar</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>2025-06-15</td>
+                                <td><button class="action-btn edit"
+                                        onclick="editSubmission('RARF2025-017');">Edit</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-017', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-018</td>
+                                <td>AI-Powered Air Traffic Control Systems</td>
+                                <td>Dr. Vivek Kohli</td>
+                                <td>AI and Machine Learning in Aerospace</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>2025-06-17</td>
+                                <td><button class="action-btn upload"
+                                        onclick="showFinalSubmissionForm('RARF2025-018');">Upload Final</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-018', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-019</td>
+                                <td>Manufacturing of Smart Structures for Aerospace</td>
+                                <td>Mr. Yash Gupta</td>
+                                <td>Aerospace Manufacturing</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2025-06-19</td>
+                                <td><button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-019', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF2025-020</td>
+                                <td>Cybersecurity Frameworks for Space Missions</td>
+                                <td>Ms. Zoya Khan</td>
+                                <td>Aerospace Safety and Security</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>2025-06-21</td>
+                                <td><button class="action-btn edit"
+                                        onclick="editSubmission('RARF2025-020');">Edit</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF2025-020', 'mysubmissions');">View
+                                        Details</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <a href="#">&laquo; Previous</a>
+                        <span class="current-page">1</span>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">Next &raquo;</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="review" class="content-section" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        My Review Assignments for RARF 2025
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Assignment ID</th>
+                                <th>Paper Title</th>
+                                <th>Topic Area</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>REV-001</td>
+                                <td>Design of Reusable Launch Vehicle Systems</td>
+                                <td>Space Systems and Technologies</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-10</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-001');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-002</td>
+                                <td>Novel Control Algorithms for High-Altitude Balloons</td>
+                                <td>Flight Mechanics and Control</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>2025-07-05</td>
+                                <td><button class="action-btn view" onclick="viewCompletedReview('REV-002');">View
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-003</td>
+                                <td>Thermo-structural Analysis of Hypersonic Vehicles</td>
+                                <td>Structures and Materials</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-15</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-003');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-004</td>
+                                <td>Additive Manufacturing Techniques for Aerospace Alloys</td>
+                                <td>Aerospace Manufacturing</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-12</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-004');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-005</td>
+                                <td>Advanced GPS and INS Integration for UAVs</td>
+                                <td>Avionics and Navigation</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>2025-07-01</td>
+                                <td><button class="action-btn view" onclick="viewCompletedReview('REV-005');">View
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-006</td>
+                                <td>Aerodynamic Performance of Blended Wing Body Aircraft</td>
+                                <td>Aerodynamics and Fluid Mechanics</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-14</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-006');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-007</td>
+                                <td>Electric Propulsion Systems for Urban Air Mobility</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-11</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-007');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-008</td>
+                                <td>Application of Blockchain in Aerospace Supply Chain Security</td>
+                                <td>Aerospace Safety and Security</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>2025-07-03</td>
+                                <td><button class="action-btn view" onclick="viewCompletedReview('REV-008');">View
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-009</td>
+                                <td>Robotics for Satellite Assembly and Maintenance</td>
+                                <td>Space Systems and Technologies</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-13</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-009');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-010</td>
+                                <td>Big Data Analytics for Air Traffic Management</td>
+                                <td>AI and Machine Learning in Aerospace</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>2025-07-07</td>
+                                <td><button class="action-btn view" onclick="viewCompletedReview('REV-010');">View
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-011</td>
+                                <td>Novel Materials for Extreme Aerospace Environments</td>
+                                <td>Structures and Materials</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-16</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-011');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-012</td>
+                                <td>Adaptive Flight Control for Manned Spacecraft</td>
+                                <td>Flight Mechanics and Control</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-17</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-012');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-013</td>
+                                <td>UAV Navigation in GPS-Denied Environments</td>
+                                <td>Unmanned Aerial Systems (UAS)</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>2025-07-08</td>
+                                <td><button class="action-btn view" onclick="viewCompletedReview('REV-013');">View
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-014</td>
+                                <td>Hypersonic Engine Inlet Design and Optimization</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-18</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-014');">Start
+                                        Review</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-015</td>
+                                <td>Quantum Computing Applications in Aerospace Simulation</td>
+                                <td>AI and Machine Learning in Aerospace</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>2025-07-19</td>
+                                <td><button class="action-btn start" onclick="startReview('REV-015');">Start
+                                        Review</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <a href="#">&laquo; Previous</a>
+                        <span class="current-page">1</span>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">Next &raquo;</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="schedule" class="content-section" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        RARF 2025 Conference Schedule
+                    </div>
+                    <div class="schedule-grid">
+                        <div class="schedule-grid-header">Time Slot</div>
+                        <div class="schedule-grid-header">Day 1 (Oct 26)</div>
+                        <div class="schedule-grid-header">Day 2 (Oct 27)</div>
+                        <div class="schedule-grid-header">Day 3 (Oct 28)</div>
+
+                        <div class="schedule-cell time-slot">08:30 - 09:00</div>
+                        <div class="schedule-cell"
+                            onclick="alert('Registration Desk Opens: Please collect your badge and conference kit.');">
+                            <div class="event-title">Registration / Welcome Coffee</div>
+                            <div class="event-room">Main Lobby</div>
+                        </div>
+                        <div class="schedule-cell" onclick="alert('Morning Networking Session');">Morning Networking
+                            Session</div>
+                        <div class="schedule-cell" onclick="alert('Final Day Registration / Coffee');">Final Day
+                            Registration / Coffee</div>
+
+                        <div class="schedule-cell time-slot">09:00 - 10:00</div>
+                        <div class="schedule-cell"
+                            onclick="alert('Keynote: The Future of Space Exploration by Dr. Evelyn Reed, Main Auditorium');">
+                            <div class="event-title">Keynote Speech</div>
+                            <div class="event-speaker">Dr. Evelyn Reed (NASA)</div>
+                            <div class="event-room">Main Auditorium</div>
+                        </div>
+                        <div class="schedule-cell"
+                            onclick="alert('Keynote: Emerging Space Technologies by Dr. Victor Zhou, Main Auditorium');">
+                            <div class="event-title">Keynote Speech</div>
+                            <div class="event-speaker">Dr. Victor Zhou (SpaceX)</div>
+                            <div class="event-room">Main Auditorium</div>
+                        </div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 7: Aerospace Safety and Regulations, Room C');">
+                            <div class="event-title">Session 7</div>
+                            <div class="event-speaker">Safety & Regulations</div>
+                            <div class="event-room">Room C</div>
+                        </div>
+
+                        <div class="schedule-cell time-slot">10:00 - 10:30</div>
+                        <div class="schedule-cell" onclick="alert('Coffee Break & Networking in Exhibition Area');">
+                            Coffee Break & Networking</div>
+                        <div class="schedule-cell" onclick="alert('Coffee Break & Networking in Exhibition Area');">
+                            Coffee Break & Networking</div>
+                        <div class="schedule-cell" onclick="alert('Coffee Break & Networking in Exhibition Area');">
+                            Coffee Break & Networking</div>
+
+                        <div class="schedule-cell time-slot">10:30 - 12:30</div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 1: Aerodynamics and CFD (Parallel Session), Room A');">
+                            <div class="event-title">Session 1</div>
+                            <div class="event-speaker">Aerodynamics & CFD</div>
+                            <div class="event-room">Room A</div>
+                        </div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 4: Advanced Propulsion Systems (Parallel Session), Room B');">
+                            <div class="event-title">Session 4</div>
+                            <div class="event-speaker">Propulsion Systems</div>
+                            <div class="event-room">Room B</div>
+                        </div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 8: Sustainable Aviation Fuels (Parallel Session), Room A');">
+                            <div class="event-title">Session 8</div>
+                            <div class="event-speaker">Sustainable Aviation</div>
+                            <div class="event-room">Room A</div>
+                        </div>
+
+                        <div class="schedule-cell time-slot">12:30 - 14:00</div>
+                        <div class="schedule-cell" onclick="alert('Lunch Break at University Cafeteria');">Lunch Break
+                        </div>
+                        <div class="schedule-cell" onclick="alert('Lunch Break at University Cafeteria');">Lunch Break
+                        </div>
+                        <div class="schedule-cell" onclick="alert('Lunch Break at University Cafeteria');">Lunch Break
+                        </div>
+
+                        <div class="schedule-cell time-slot">14:00 - 16:00</div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 2: Structures and Materials (Parallel Session), Room C');">
+                            <div class="event-title">Session 2</div>
+                            <div class="event-speaker">Structures & Materials</div>
+                            <div class="event-room">Room C</div>
+                        </div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 5: UAVs and Drone Technologies (Parallel Session), Room A');">
+                            <div class="event-title">Session 5</div>
+                            <div class="event-speaker">UAVs & Drones</div>
+                            <div class="event-room">Room A</div>
+                        </div>
+                        <div class="schedule-cell"
+                            onclick="alert('Closing Ceremony and Awards Distribution, Main Auditorium');">
+                            <div class="event-title">Closing Ceremony</div>
+                            <div class="event-speaker">Awards & Farewell</div>
+                            <div class="event-room">Main Auditorium</div>
+                        </div>
+
+                        <div class="schedule-cell time-slot">16:00 - 16:30</div>
+                        <div class="schedule-cell" onclick="alert('Coffee Break & Poster Session (Hall 1)');">Coffee
+                            Break & Poster Session</div>
+                        <div class="schedule-cell" onclick="alert('Coffee Break & Networking');">Coffee Break &
+                            Networking</div>
+                        <div class="schedule-cell" onclick="alert('Post-Conference Networking Session');">Networking
+                            Session</div>
+
+                        <div class="schedule-cell time-slot">16:30 - 17:30</div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 3: Flight Dynamics and Control (Parallel Session), Room B');">
+                            <div class="event-title">Session 3</div>
+                            <div class="event-speaker">Flight Dynamics & Control</div>
+                            <div class="event-room">Room B</div>
+                        </div>
+                        <div class="schedule-cell"
+                            onclick="alert('Session 6: AI & ML in Aerospace (Parallel Session), Room C');">
+                            <div class="event-title">Session 6</div>
+                            <div class="event-speaker">AI & ML</div>
+                            <div class="event-room">Room C</div>
+                        </div>
+                        <div class="schedule-cell" onclick="alert('Conference Officially Concludes');">Conference End
+                        </div>
+                    </div>
+                    <p style="margin-top: 30px; text-align: center; font-style: italic; color: #666;">Note: This
+                        schedule is subject to change. Please refer to the official RARF 2025 program guide for
+                        real-time updates.</p>
+                </div>
+            </section>
+
+            <section id="admin" class="content-section" style="display:none;">
+                <div class="card">
+                    <div class="card-header">
+                        Admin Panel - All Submissions (RARF 2025)
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Authors</th>
+                                <th>Topic</th>
+                                <th>Status</th>
+                                <th>Reviews</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RARF25-011</td>
+                                <td>Nano-materials for Aerospace Structural Applications</td>
+                                <td>A. Kumar, B. Singh</td>
+                                <td>Structures and Materials</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td>
+                                    <button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-011');">Assign</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-011', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-012</td>
+                                <td>AI in Predictive Maintenance of Aircraft Engines</td>
+                                <td>C. Devi, D. Prasad</td>
+                                <td>AI & Machine Learning</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>1/3</td>
+                                <td>
+                                    <button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-012');">Monitor</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-012', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-013</td>
+                                <td>Development of Hybrid Propulsion Systems</td>
+                                <td>E. Rao, F. Sharma</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td>
+                                    <button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-013');">Finalize</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-013', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-014</td>
+                                <td>Trajectory Optimization for Interplanetary Missions</td>
+                                <td>G. Reddy, H. Kumar</td>
+                                <td>Space Systems</td>
+                                <td><span class="status-badge rejected">Rejected</span></td>
+                                <td>2/3</td>
+                                <td>
+                                    <button class="action-btn danger"
+                                        onclick="notifyAuthors('RARF25-014');">Notify</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-014', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-015</td>
+                                <td>Aerodynamic Design of Hypersonic Glide Vehicles</td>
+                                <td>I. Singh, J. Patel</td>
+                                <td>Aerodynamics</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td>
+                                    <button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-015');">Assign</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-015', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-016</td>
+                                <td>Control Systems for Autonomous Aerial Vehicles</td>
+                                <td>K. Nair, L. Menon</td>
+                                <td>Flight Mechanics & Control</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2/3</td>
+                                <td>
+                                    <button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-016');">Monitor</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-016', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-017</td>
+                                <td>Sustainable Aviation Technologies: A Review</td>
+                                <td>M. Das, N. Choudhury</td>
+                                <td>Sustainable Aviation</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td>
+                                    <button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-017');">Finalize</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-017', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-018</td>
+                                <td>Security Vulnerabilities in Satellite Communication</td>
+                                <td>O. Singh, P. Kaur</td>
+                                <td>Aerospace Safety</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td>
+                                    <button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-018');">Assign</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-018', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-019</td>
+                                <td>Advanced Manufacturing of Composite Structures</td>
+                                <td>Q. Khan, R. Shah</td>
+                                <td>Aerospace Manufacturing</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>1/3</td>
+                                <td>
+                                    <button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-019');">Monitor</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-019', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-020</td>
+                                <td>Application of Digital Twins in Aircraft Maintenance</td>
+                                <td>S. Kumar, T. Varma</td>
+                                <td>AI & Machine Learning</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td>
+                                    <button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-020');">Finalize</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-020', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-021</td>
+                                <td>Hypersonic Propulsion Systems for Future Aerospace Vehicles</td>
+                                <td>U. Singh, V. Kohli</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td>
+                                    <button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-021');">Assign</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-021', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-022</td>
+                                <td>Atmospheric Re-entry Dynamics and Heat Transfer</td>
+                                <td>W. Das, X. Yadav</td>
+                                <td>Aerodynamics and Fluid Mechanics</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2/3</td>
+                                <td>
+                                    <button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-022');">Monitor</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-022', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-023</td>
+                                <td>Cyber-Physical Security for UAV Systems</td>
+                                <td>Y. Gupta, Z. Sharma</td>
+                                <td>Unmanned Aerial Systems (UAS)</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td>
+                                    <button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-023');">Assign</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-023', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-024</td>
+                                <td>Satellite Constellation Design for Global Coverage</td>
+                                <td>A. Prakash, B. Jain</td>
+                                <td>Space Systems and Technologies</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>1/3</td>
+                                <td>
+                                    <button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-024');">Monitor</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-024', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-025</td>
+                                <td>Optimal Control of Flexible Spacecraft Structures</td>
+                                <td>C. Ghosh, D. Mitra</td>
+                                <td>Flight Mechanics and Control</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td>
+                                    <button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-025');">Finalize</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-025', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-026</td>
+                                <td>Machine Learning for Material Characterization in Aerospace</td>
+                                <td>E. Shah, F. Gupta</td>
+                                <td>Structures and Materials</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td>
+                                    <button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-026');">Assign</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-026', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-027</td>
+                                <td>Advancements in Supersonic Aircraft Design</td>
+                                <td>G. Balaji, H. Rao</td>
+                                <td>Aerodynamics and Fluid Mechanics</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2/3</td>
+                                <td>
+                                    <button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-027');">Monitor</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-027', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-028</td>
+                                <td>Fault Diagnosis in Satellite Subsystems using AI</td>
+                                <td>I. Kumar, J. Devi</td>
+                                <td>AI and Machine Learning in Aerospace</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td>
+                                    <button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-028');">Assign</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-028', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-029</td>
+                                <td>Modeling and Simulation of Rocket Propulsion Systems</td>
+                                <td>K. Singh, L. Pal</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>1/3</td>
+                                <td>
+                                    <button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-029');">Monitor</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-029', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-030</td>
+                                <td>Risk Assessment in Unmanned Aerial Vehicle Operations</td>
+                                <td>M. Choudhary, N. Verma</td>
+                                <td>Aerospace Safety</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td>
+                                    <button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-030');">Finalize</button>
+                                    <button class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-030', 'admin');">View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-031</td>
+                                <td>Advanced Avionics for Supersonic Commercial Jets</td>
+                                <td>P. Sharma</td>
+                                <td>Avionics and Navigation</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td><button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-031');">Assign</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-031', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-032</td>
+                                <td>Space Debris Mitigation Strategies</td>
+                                <td>Q. Singh</td>
+                                <td>Space Systems and Technologies</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>1/3</td>
+                                <td><button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-032');">Monitor</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-032', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-033</td>
+                                <td>Aerodynamic Drag Reduction using Active Flow Control</td>
+                                <td>R. Khan</td>
+                                <td>Aerodynamics and Fluid Mechanics</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td><button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-033');">Finalize</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-033', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-034</td>
+                                <td>Non-Destructive Testing of Aerospace Composites</td>
+                                <td>S. Reddy</td>
+                                <td>Structures and Materials</td>
+                                <td><span class="status-badge rejected">Rejected</span></td>
+                                <td>2/3</td>
+                                <td><button class="action-btn danger"
+                                        onclick="notifyAuthors('RARF25-034');">Notify</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-034', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-035</td>
+                                <td>Machine Learning for Satellite Health Monitoring</td>
+                                <td>T. Varma</td>
+                                <td>AI and Machine Learning in Aerospace</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td><button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-035');">Assign</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-035', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-036</td>
+                                <td>Bio-inspired Design for Flapping Wing MAVs</td>
+                                <td>U. Devi</td>
+                                <td>Unmanned Aerial Systems (UAS)</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>2/3</td>
+                                <td><button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-036');">Monitor</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-036', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-037</td>
+                                <td>Next-Gen Rocket Engine Combustion Instability</td>
+                                <td>V. Kumar</td>
+                                <td>Propulsion and Power</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td><button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-037');">Finalize</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-037', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-038</td>
+                                <td>Additive Manufacturing of Lightweight Aerospace Structures</td>
+                                <td>W. Singh</td>
+                                <td>Aerospace Manufacturing</td>
+                                <td><span class="status-badge submitted">Submitted</span></td>
+                                <td>0/3</td>
+                                <td><button class="action-btn assign"
+                                        onclick="showAdminSubmissionManagement('RARF25-038');">Assign</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-038', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-039</td>
+                                <td>Cybersecurity for Commercial Aviation Systems</td>
+                                <td>X. Patel</td>
+                                <td>Aerospace Safety and Security</td>
+                                <td><span class="status-badge under-review">Under Review</span></td>
+                                <td>1/3</td>
+                                <td><button class="action-btn monitor"
+                                        onclick="showAdminSubmissionManagement('RARF25-039');">Monitor</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-039', 'admin');">View</button></td>
+                            </tr>
+                            <tr>
+                                <td>RARF25-040</td>
+                                <td>Sustainable Aviation Logistics and Supply Chains</td>
+                                <td>Y. Sharma</td>
+                                <td>Sustainable Aviation</td>
+                                <td><span class="status-badge accepted">Accepted</span></td>
+                                <td>3/3</td>
+                                <td><button class="action-btn success"
+                                        onclick="finalizeSubmission('RARF25-040');">Finalize</button><button
+                                        class="action-btn view"
+                                        onclick="showSubmissionDetails('RARF25-040', 'admin');">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <a href="#">&laquo; Previous</a>
+                        <span class="current-page">1</span>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">4</a>
+                        <a href="#">5</a>
+                        <a href="#">...</a>
+                        <a href="#">15</a>
+                        <a href="#">Next &raquo;</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        Admin Panel - Reviewer Management (RARF 2025)
+                        <button class="action-button" onclick="alert('Function to add a new reviewer profile');">Add New
+                            Reviewer</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Reviewer ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Expertise</th>
+                                <th>Assigned</th>
+                                <th>Completed</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>REV-P001</td>
+                                <td>Dr. Alok Verma</td>
+                                <td>alok.v@example.com</td>
+                                <td>Aerodynamics, CFD</td>
+                                <td>5</td>
+                                <td>3</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Alok Verma');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Alok Verma');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P002</td>
+                                <td>Prof. Sunita Rao</td>
+                                <td>sunita.r@example.com</td>
+                                <td>Space Systems, Satellite Comm.</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Sunita Rao');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Sunita Rao');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P003</td>
+                                <td>Dr. Imran Khan</td>
+                                <td>imran.k@example.com</td>
+                                <td>Propulsion, Electric Aircraft</td>
+                                <td>6</td>
+                                <td>2</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Imran Khan');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Imran Khan');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P004</td>
+                                <td>Ms. Bhavana Das</td>
+                                <td>bhavana.d@example.com</td>
+                                <td>UAVs, Control Systems</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Bhavana Das');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Bhavana Das');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P005</td>
+                                <td>Dr. Chetan Sharma</td>
+                                <td>chetan.s@example.com</td>
+                                <td>Structures, Composites</td>
+                                <td>5</td>
+                                <td>1</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Chetan Sharma');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Chetan Sharma');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P006</td>
+                                <td>Prof. Dinesh Singh</td>
+                                <td>dinesh.s@example.com</td>
+                                <td>AI in Aerospace, Avionics</td>
+                                <td>4</td>
+                                <td>2</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Dinesh Singh');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Dinesh Singh');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P007</td>
+                                <td>Dr. Esha Gupta</td>
+                                <td>esha.g@example.com</td>
+                                <td>Aerospace Safety, Regulations</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Esha Gupta');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Esha Gupta');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P008</td>
+                                <td>Dr. Farhan Ahmed</td>
+                                <td>farhan.a@example.com</td>
+                                <td>Manufacturing, Additive Mfg.</td>
+                                <td>5</td>
+                                <td>4</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Farhan Ahmed');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Farhan Ahmed');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P009</td>
+                                <td>Prof. Gayatri Devi</td>
+                                <td>gayatri.d@example.com</td>
+                                <td>Sustainable Aviation, Green Tech</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Gayatri Devi');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Gayatri Devi');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P010</td>
+                                <td>Dr. Harish Prasad</td>
+                                <td>harish.p@example.com</td>
+                                <td>Aerodynamics, Flight Mechanics</td>
+                                <td>4</td>
+                                <td>0</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Harish Prasad');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Harish Prasad');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P011</td>
+                                <td>Dr. Ishaan Rao</td>
+                                <td>ishaan.r@example.com</td>
+                                <td>Space Systems, Robotics</td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Ishaan Rao');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Ishaan Rao');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P012</td>
+                                <td>Prof. Jaya Kumar</td>
+                                <td>jaya.k@example.com</td>
+                                <td>AI & ML, Big Data</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Jaya Kumar');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Jaya Kumar');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P013</td>
+                                <td>Dr. Karthik N.</td>
+                                <td>karthik.n@example.com</td>
+                                <td>Propulsion, Hypersonics</td>
+                                <td>4</td>
+                                <td>1</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Karthik N.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Karthik N.');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P014</td>
+                                <td>Ms. Lakshmi P.</td>
+                                <td>lakshmi.p@example.com</td>
+                                <td>UAV Design, Control</td>
+                                <td>3</td>
+                                <td>0</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Lakshmi P.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Lakshmi P.');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P015</td>
+                                <td>Dr. Manoj V.</td>
+                                <td>manoj.v@example.com</td>
+                                <td>Materials Science, Nanomaterials</td>
+                                <td>6</td>
+                                <td>3</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Manoj V.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Manoj V.');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P016</td>
+                                <td>Prof. Neha R.</td>
+                                <td>neha.r@example.com</td>
+                                <td>Aerospace Safety, Cybersecurity</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Neha R.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Neha R.');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P017</td>
+                                <td>Dr. Omar S.</td>
+                                <td>omar.s@example.com</td>
+                                <td>Aerodynamics, Flight Test</td>
+                                <td>5</td>
+                                <td>0</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Omar S.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Omar S.');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P018</td>
+                                <td>Dr. Priya A.</td>
+                                <td>priya.a@example.com</td>
+                                <td>Sustainable Aviation, Biofuels</td>
+                                <td>3</td>
+                                <td>1</td>
+                                <td><span class="status-badge assigned">Active</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Priya A.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Priya A.');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P019</td>
+                                <td>Prof. Rohan B.</td>
+                                <td>rohan.b@example.com</td>
+                                <td>Avionics, GNSS</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Rohan B.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Rohan B.');">Assign</button></td>
+                            </tr>
+                            <tr>
+                                <td>REV-P020</td>
+                                <td>Dr. Sanjana C.</td>
+                                <td>sanjana.c@example.com</td>
+                                <td>Aerospace Management, Economics</td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td><button class="action-btn view"
+                                        onclick="alert('View full reviewer profile for Sanjana C.');">Profile</button><button
+                                        class="action-btn assign"
+                                        onclick="alert('Manage assignments for Sanjana C.');">Assign</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <a href="#">&laquo; Previous</a>
+                        <span class="current-page">1</span>
+                        <a href="#">2</a>
+                        <a href="#">Next &raquo;</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        Admin Panel - User Accounts (RARF CMT Users)
+                        <button class="action-button" onclick="alert('Function to add a new user account');">Add New
+                            User</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>USER-001</td>
+                                <td>Admin User (RARF)</td>
+                                <td>admin@rarf.com</td>
+                                <td>Admin</td>
+                                <td>2025-06-27</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-001');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-001');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-002</td>
+                                <td>Dr. Priya Sharma</td>
+                                <td>priya.s@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-26</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-002');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-002');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-003</td>
+                                <td>Prof. Rohan Gupta</td>
+                                <td>rohan.g@example.com</td>
+                                <td>Author, Reviewer</td>
+                                <td>2025-06-27</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-003');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-003');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-004</td>
+                                <td>Dr. Alok Verma</td>
+                                <td>alok.v@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-25</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-004');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-004');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-005</td>
+                                <td>Ms. Ananya Singh</td>
+                                <td>ananya.s@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-20</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-005');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-005');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-006</td>
+                                <td>Prof. Sunita Rao</td>
+                                <td>sunita.r@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-24</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-006');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-006');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-007</td>
+                                <td>Dr. Sameer Khan</td>
+                                <td>sameer.k@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-18</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-007');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-007');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-008</td>
+                                <td>Dr. Imran Khan</td>
+                                <td>imran.k@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-26</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-008');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-008');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-009</td>
+                                <td>Mr. Vikram Reddy</td>
+                                <td>vikram.r@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-21</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-009');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-009');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-010</td>
+                                <td>Ms. Bhavana Das</td>
+                                <td>bhavana.d@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-23</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-010');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-010');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-011</td>
+                                <td>Dr. Kavya Rao</td>
+                                <td>kavya.r@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-25</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-011');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-011');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-012</td>
+                                <td>Dr. Chetan Sharma</td>
+                                <td>chetan.s@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-22</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-012');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-012');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-013</td>
+                                <td>Prof. Rajesh Kumar</td>
+                                <td>rajesh.k@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-19</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-013');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-013');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-014</td>
+                                <td>Prof. Dinesh Singh</td>
+                                <td>dinesh.s@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-27</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-014');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-014');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-015</td>
+                                <td>Dr. Fatima Ali</td>
+                                <td>fatima.a@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-24</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-015');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-015');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-016</td>
+                                <td>Dr. Esha Gupta</td>
+                                <td>esha.g@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-21</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-016');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-016');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-017</td>
+                                <td>Mr. Gopal Iyengar</td>
+                                <td>gopal.i@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-26</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-017');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-017');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-018</td>
+                                <td>Dr. Farhan Ahmed</td>
+                                <td>farhan.a@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-20</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-018');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-018');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-019</td>
+                                <td>Ms. Zara Patel</td>
+                                <td>zara.p@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-27</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-019');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-019');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-020</td>
+                                <td>Prof. Gayatri Devi</td>
+                                <td>gayatri.d@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-25</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-020');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-020');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-021</td>
+                                <td>Dr. Liam Nash</td>
+                                <td>liam.n@example.com</td>
+                                <td>Reviewer</td>
+                                <td>2025-06-20</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-021');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-021');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-022</td>
+                                <td>Ms. Maya Patel</td>
+                                <td>maya.p@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-18</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-022');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-022');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-023</td>
+                                <td>Dr. Nina Singh</td>
+                                <td>nina.s@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-23</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-023');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-023');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-024</td>
+                                <td>Prof. Omar Hassan</td>
+                                <td>omar.h@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-21</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-024');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-024');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-025</td>
+                                <td>Dr. Pooja Verma</td>
+                                <td>pooja.v@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-20</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-025');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-025');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-026</td>
+                                <td>Mr. Rahul Dev</td>
+                                <td>rahul.d@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-19</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-026');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-026');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-027</td>
+                                <td>Ms. Shruti Sharma</td>
+                                <td>shruti.s@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-22</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-027');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-027');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-028</td>
+                                <td>Dr. Tarun Singh</td>
+                                <td>tarun.s@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-24</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-028');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-028');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-029</td>
+                                <td>Prof. Uma Shankar</td>
+                                <td>uma.s@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-25</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-029');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-029');">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>USER-030</td>
+                                <td>Dr. Vivek Kohli</td>
+                                <td>vivek.k@example.com</td>
+                                <td>Author</td>
+                                <td>2025-06-26</td>
+                                <td><button class="action-btn edit"
+                                        onclick="alert('Edit user USER-030');">Edit</button><button
+                                        class="action-btn delete"
+                                        onclick="alert('Delete user USER-030');">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <a href="#">&laquo; Previous</a>
+                        <span class="current-page">1</span>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">Next &raquo;</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Ramaiah Institute of Technology - Ramaiah Aerospace and Research Forum. All rights reserved.
+            </p>
+            <p>Powered by RARF CMT | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            <p>For support, contact <a href="mailto:support@rarf.msrit.edu">support@rarf.msrit.edu</a></p>
+        </div>
+    </footer>
+
+    <div id="submissionDetailOverlay" class="detail-view-overlay" style="display:none;">
+        <div class="detail-view-content">
+            <button class="close-btn" onclick="hideDetailView()">✖</button>
+            <h3 id="submissionDetailTitle"></h3>
+            <p><strong>Submission ID:</strong> <span id="submissionDetailId"></span></p>
+            <p><strong>Authors:</strong> <span id="submissionDetailAuthors"></span></p>
+            <p><strong>Topic Area:</strong> <span id="submissionDetailTopic"></span></p>
+            <p><strong>Status:</strong> <span id="submissionDetailStatus"></span></p>
+            <p><strong>Date Submitted:</strong> <span id="submissionDetailDate"></span></p>
+
+            <div class="detail-section">
+                <h4>Abstract</h4>
+                <p id="submissionDetailAbstract"></p>
+            </div>
+
+            <div class="detail-section">
+                <h4>Keywords</h4>
+                <p id="submissionDetailKeywords"></p>
+            </div>
+
+            <div class="detail-section" id="submissionReviewSection" style="display:none;">
+                <h4>Review Comments</h4>
+                <ul id="submissionReviewList">
+                </ul>
+            </div>
+            <p style="margin-top: 20px; text-align: center;">
+                <button class="action-btn view" onclick="alert('Download actual paper PDF');">Download Paper
+                    PDF</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="reviewFormOverlay" class="detail-view-overlay" style="display:none;">
+        <div class="detail-view-content">
+            <button class="close-btn" onclick="hideDetailView()">✖</button>
+            <h3>Review Paper: <span id="reviewFormPaperTitle"></span></h3>
+            <p><strong>Assignment ID:</strong> <span id="reviewFormAssignmentId"></span></p>
+            <p><strong>Due Date:</strong> <span id="reviewFormDueDate"></span></p>
+
+            <form id="actualReviewForm">
+                <div class="form-group">
+                    <label for="reviewOverallRating">Overall Rating (1-5, 5=Excellent):</label>
+                    <input type="number" id="reviewOverallRating" name="overallRating" min="1" max="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewOriginality">Originality (1-5):</label>
+                    <input type="number" id="reviewOriginality" name="originality" min="1" max="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewClarity">Clarity of Presentation (1-5):</label>
+                    <input type="number" id="reviewClarity" name="clarity" min="1" max="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewSignificance">Significance of Contribution (1-5):</label>
+                    <input type="number" id="reviewSignificance" name="significance" min="1" max="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewCommentsToAuthors">Comments to Authors (for improvement):</label>
+                    <textarea id="reviewCommentsToAuthors" name="commentsToAuthors" rows="8"
+                        placeholder="Provide constructive feedback for the authors."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reviewConfidentialComments">Confidential Comments to PC Chairs:</label>
+                    <textarea id="reviewConfidentialComments" name="confidentialComments" rows="4"
+                        placeholder="Any confidential remarks for the organizing committee."></textarea>
+                </div>
+                <button type="submit" class="submit-button">Submit Review</button>
+                <button type="button" class="action-btn" style="background-color: #f0ad4e;"
+                    onclick="alert('Review saved as draft!');">Save Draft</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="adminSubmissionManagementOverlay" class="detail-view-overlay" style="display:none;">
+        <div class="detail-view-content">
+            <button class="close-btn" onclick="hideDetailView()">✖</button>
+            <h3>Manage Submission: <span id="adminManageSubmissionTitle"></span></h3>
+            <p><strong>Submission ID:</strong> <span id="adminManageSubmissionId"></span></p>
+            <p><strong>Current Status:</strong> <span id="adminManageSubmissionStatus"></span></p>
+
+            <div class="detail-section">
+                <h4>Assign Reviewers</h4>
+                <div class="form-group">
+                    <label for="reviewerSelect">Select Reviewer:</label>
+                    <select id="reviewerSelect">
+                        <option value="">-- Select Reviewer --</option>
+                        <option value="REV-P001">Dr. Alok Verma (Aerodynamics)</option>
+                        <option value="REV-P002">Prof. Sunita Rao (Space Systems)</option>
+                        <option value="REV-P003">Dr. Imran Khan (Propulsion)</option>
+                        <option value="REV-P004">Ms. Bhavana Das (UAVs)</option>
+                        <option value="REV-P005">Dr. Chetan Sharma (Structures)</option>
+                        <option value="REV-P006">Prof. Dinesh Singh (AI in Aerospace)</option>
+                        <option value="REV-P007">Dr. Esha Gupta (Aerospace Safety)</option>
+                        <option value="REV-P020">Dr. Sanjana C. (Aerospace Management)</option>
+                    </select>
+                </div>
+                <button class="action-btn assign" onclick="assignReviewer()">Assign Reviewer</button>
+            </div>
+
+            <div class="detail-section">
+                <h4>Current Reviews & Progress</h4>
+                <ul id="adminReviewProgressList">
+                    <li>Reviewer: Dr. Alok Verma <span class="status-badge pending">Pending</span></li>
+                    <li>Reviewer: Dr. Imran Khan <span class="status-badge pending">Pending</span></li>
+                    <li>Reviewer: Dr. Chetan Sharma <span class="status-badge completed">Completed</span> <button
+                            class="action-btn view" onclick="alert('View review details');"
+                            style="margin-left: 10px;">View</button></li>
+                </ul>
+            </div>
+
+            <div class="detail-section">
+                <h4>Decision Actions</h4>
+                <button class="action-btn success" onclick="alert('Mark paper as Accepted!');">Mark Accepted</button>
+                <button class="action-btn danger" onclick="alert('Mark paper as Rejected!');">Mark Rejected</button>
+                <button class="action-btn info" onclick="alert('Send Revision Request to Authors!');">Request
+                    Revision</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Dummy data for dynamic content
+        const allSubmissions = [
+            {
+                id: 'RARF2025-001',
+                title: 'Integrated Avionics Systems for Next-Gen Aircraft',
+                authors: 'Dr. Priya Sharma (Ramaiah Institute of Technology), Prof. K. Rao (IISc Bengaluru)',
+                abstract: 'This paper presents a novel approach to integrate disparate avionics systems using a modular architecture for enhanced performance and safety. We discuss the challenges of legacy system integration and propose a future-proof framework...',
+                keywords: 'Avionics, Integration, Aircraft, Safety, Modular Systems',
+                topic: 'Avionics and Navigation',
+                status: 'Under Review',
+                date: '2025-05-10',
+                reviews: [
+                    { reviewer: 'Dr. Alok Verma', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Prof. Sunita Rao', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Imran Khan', status: 'Completed', rating: 4, comments: 'Well-structured paper. Clear presentation of concepts. Experimental validation would strengthen the conclusions further.' }
+                ]
+            },
+            {
+                id: 'RARF2025-002',
+                title: 'Deep Learning Applications in Satellite Imagery Analysis',
+                authors: 'Prof. Rohan Gupta (Ramaiah Institute of Technology), Dr. S. Nambiar (ISRO)',
+                abstract: 'We explore the efficacy of various deep learning architectures, particularly Convolutional Neural Networks (CNNs), in classifying and analyzing high-resolution satellite imagery for urban planning and disaster management. Our results show significant accuracy improvements...',
+                keywords: 'Deep Learning, Satellite Imagery, CNN, Urban Planning, Disaster Management',
+                topic: 'Space Systems and Technologies',
+                status: 'Accepted',
+                date: '2025-05-12',
+                reviews: [
+                    { reviewer: 'Dr. Esha Gupta', status: 'Completed', rating: 5, comments: 'Excellent and timely research. The methodology is robust, and results are clearly presented. A strong candidate for publication.' },
+                    { reviewer: 'Dr. Farhan Ahmed', status: 'Completed', rating: 4, comments: 'Good work. The discussion on limitations could be expanded slightly, but overall a very valuable contribution.' },
+                    { reviewer: 'Dr. Chetan Sharma', status: 'Completed', rating: 5, comments: 'Highly relevant to current trends. Impressive application of DL techniques. Well-written paper.' }
+                ]
+            },
+            {
+                id: 'RARF2025-003',
+                title: 'Sustainable Aviation Fuels: Challenges and Opportunities',
+                authors: 'Ms. Ananya Singh (M.S. Ramaiah University of Applied Sciences), Dr. P. Kumar (Industry Partner)',
+                abstract: 'This paper reviews the current landscape of Sustainable Aviation Fuels (SAFs), focusing on production pathways, economic viability, and environmental impact. We identify key challenges in scaling SAF production and explore future opportunities...',
+                keywords: 'Sustainable Aviation, SAF, Biofuels, Environmental Impact, Policy',
+                topic: 'Sustainable Aviation',
+                status: 'Rejected',
+                date: '2025-05-15',
+                reviews: [
+                    { reviewer: 'Prof. Gayatri Devi', status: 'Completed', rating: 2, comments: 'The review is too broad and lacks novel insights. More specific technical depth is needed.' },
+                    { reviewer: 'Dr. Harish Prasad', status: 'Completed', rating: 3, comments: 'A decent overview, but does not provide significant new research or a unique perspective.' }
+                ]
+            },
+            {
+                id: 'RARF2025-004',
+                title: 'Advanced Materials for High-Temperature Aerospace Applications',
+                authors: 'Dr. Sameer Khan (Ramaiah Institute of Technology)',
+                abstract: 'We investigate novel ceramic matrix composites (CMCs) and their performance under extreme thermal loads relevant to hypersonic flight and turbine engines. Mechanical properties and degradation mechanisms are analyzed through experimental and computational methods.',
+                keywords: 'CMCs, High-Temperature Materials, Hypersonics, Turbine Engines, Mechanical Properties',
+                topic: 'Structures and Materials',
+                status: 'Submitted',
+                date: '2025-05-18',
+                reviews: []
+            },
+            {
+                id: 'RARF2025-005',
+                title: 'Optimizing UAV Swarm Communication Protocols',
+                authors: 'Mr. Vikram Reddy (Ramaiah Institute of Technology), Dr. L. Shankar (DRDO)',
+                abstract: 'This paper proposes a new decentralized communication protocol for heterogeneous UAV swarms, aimed at improving robustness and efficiency in dynamic environments. Simulation results demonstrate superior performance compared to existing methods.',
+                keywords: 'UAV Swarm, Communication Protocols, Decentralized Control, Multi-UAV, Simulation',
+                topic: 'Unmanned Aerial Systems (UAS)',
+                status: 'Under Review',
+                date: '2025-05-20',
+                reviews: [
+                    { reviewer: 'Ms. Bhavana Das', status: 'Completed', rating: 4, comments: 'Solid technical contribution. The protocol design is innovative. Consider discussing hardware implications more thoroughly.' },
+                    { reviewer: 'Prof. Dinesh Singh', status: 'Pending', rating: null, comments: null }
+                ]
+            },
+            {
+                id: 'RARF2025-006',
+                title: 'AI-Driven Predictive Maintenance for Aircraft Engines',
+                authors: 'Dr. Kavya Rao (Ramaiah Institute of Technology)',
+                abstract: 'We present an AI-powered framework for predictive maintenance of commercial aircraft engines, leveraging sensor data and machine learning algorithms to forecast component failures. This approach significantly reduces unscheduled downtime.',
+                keywords: 'Predictive Maintenance, Aircraft Engines, AI, Machine Learning, Sensor Data',
+                topic: 'AI and Machine Learning in Aerospace',
+                status: 'Accepted',
+                date: '2025-05-22',
+                reviews: [
+                    { reviewer: 'Prof. Jaya Kumar', status: 'Completed', rating: 5, comments: 'Outstanding practical application of AI. The results have clear industry impact. A must-read for practitioners.' },
+                    { reviewer: 'Dr. Karthik N.', status: 'Completed', rating: 4, comments: 'Well-executed project. The evaluation metrics are convincing. Minor formatting issues, but content is strong.' }
+                ]
+            },
+            {
+                id: 'RARF2025-007',
+                title: 'Computational Fluid Dynamics of Re-entry Vehicles',
+                authors: 'Prof. Rajesh Kumar (Ramaiah Institute of Technology), Dr. S. Rao (IISc)',
+                abstract: 'This study employs advanced CFD techniques to simulate the complex high-enthalpy flow fields around re-entry vehicles during atmospheric re-entry. We analyze shock-wave boundary layer interactions and thermal loads.',
+                keywords: 'CFD, Re-entry Vehicles, Hypersonic Flow, Thermal Loads, Atmospheric Re-entry',
+                topic: 'Aerodynamics and Fluid Mechanics',
+                status: 'Under Review',
+                date: '2025-05-25',
+                reviews: [
+                    { reviewer: 'Dr. Alok Verma', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Farhan Ahmed', status: 'Completed', rating: 3, comments: 'Standard CFD analysis. Results are sound but lack groundbreaking novelty.' }
+                ]
+            },
+            {
+                id: 'RARF2025-008',
+                title: 'Solid Rocket Motor Performance Optimization',
+                authors: 'Dr. Fatima Ali (Ramaiah Institute of Technology)',
+                abstract: 'An investigation into optimizing the performance of solid rocket motors through novel grain designs and propellant compositions. We utilize numerical simulations coupled with experimental validation to assess efficiency gains and thrust profiles.',
+                keywords: 'Solid Rocket Motor, Propulsion, Optimization, Grain Design, Propellant',
+                topic: 'Propulsion and Power',
+                status: 'Submitted',
+                date: '2025-05-28',
+                reviews: []
+            },
+            {
+                id: 'RARF2025-009',
+                title: 'Additive Manufacturing for Aerospace Components',
+                authors: 'Mr. Gopal Iyengar (Ramaiah Institute of Technology), Dr. A. Jain (HAL)',
+                abstract: 'This paper explores the application of various additive manufacturing techniques, including SLM and FDM, for producing complex aerospace components with improved strength-to-weight ratios. Challenges in process control and quality assurance are discussed.',
+                keywords: 'Additive Manufacturing, 3D Printing, Aerospace Components, SLM, FDM',
+                topic: 'Aerospace Manufacturing',
+                status: 'Under Review',
+                date: '2025-05-30',
+                reviews: [
+                    { reviewer: 'Dr. Farhan Ahmed', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Chetan Sharma', status: 'Pending', rating: null, comments: null }
+                ]
+            },
+            {
+                id: 'RARF2025-010',
+                title: 'Cybersecurity Challenges in Modern Aircraft Systems',
+                authors: 'Ms. Zara Patel (Ramaiah Institute of Technology)',
+                abstract: 'As aircraft become more connected, cybersecurity threats pose significant risks. This paper identifies key vulnerabilities in modern avionics and communication systems and proposes mitigation strategies to enhance aircraft security.',
+                keywords: 'Cybersecurity, Aircraft, Avionics, Network Security, Threat Mitigation',
+                topic: 'Aerospace Safety and Security',
+                status: 'Accepted',
+                date: '2025-06-01',
+                reviews: [
+                    { reviewer: 'Dr. Esha Gupta', status: 'Completed', rating: 5, comments: 'Extremely relevant and well-argued paper. The insights on future threats are particularly valuable.' },
+                    { reviewer: 'Prof. Neha R.', status: 'Completed', rating: 4, comments: 'Good comprehensive review. Perhaps add a small case study if possible.' }
+                ]
+            },
+            {
+                id: 'RARF25-011',
+                title: 'Nano-materials for Aerospace Structural Applications',
+                authors: 'A. Kumar, B. Singh',
+                abstract: 'Investigating the mechanical properties and manufacturing challenges of integrating carbon nanotubes and graphene into aerospace composites for lightweight, high-strength structures.',
+                keywords: 'Nanomaterials, Composites, Structures, Carbon Nanotubes, Graphene',
+                topic: 'Structures and Materials',
+                status: 'Submitted',
+                date: '2025-06-02',
+                reviews: []
+            },
+            {
+                id: 'RARF25-012',
+                title: 'AI in Predictive Maintenance of Aircraft Engines',
+                authors: 'C. Devi, D. Prasad',
+                abstract: 'An AI-driven framework for anticipating failures in aircraft engines using sensor data and deep learning models, aiming to minimize downtime and enhance safety.',
+                keywords: 'AI, Predictive Maintenance, Aircraft Engines, Deep Learning, Sensor Data',
+                topic: 'AI and Machine Learning in Aerospace',
+                status: 'Under Review',
+                date: '2025-06-03',
+                reviews: [
+                    { reviewer: 'Prof. Jaya Kumar', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Ishaan Rao', status: 'Completed', rating: 4, comments: 'Good methodology, solid results. Consider more real-world validation data.' }
+                ]
+            },
+            {
+                id: 'RARF25-013',
+                title: 'Development of Hybrid Propulsion Systems',
+                authors: 'E. Rao, F. Sharma',
+                abstract: 'Exploring the design and performance of hybrid-electric propulsion systems for future short-haul aircraft, focusing on efficiency, noise reduction, and integration challenges.',
+                keywords: 'Hybrid Propulsion, Electric Aircraft, Green Aviation, Noise Reduction',
+                topic: 'Propulsion and Power',
+                status: 'Accepted',
+                date: '2025-06-04',
+                reviews: [
+                    { reviewer: 'Dr. Karthik N.', status: 'Completed', rating: 5, comments: 'Excellent and highly relevant research. Clearly presented, strong potential for impact.' },
+                    { reviewer: 'Dr. Manoj V.', status: 'Completed', rating: 4, comments: 'Well-researched, but could elaborate more on economic feasibility.' }
+                ]
+            },
+            {
+                id: 'RARF25-014',
+                title: 'Trajectory Optimization for Interplanetary Missions',
+                authors: 'G. Reddy, H. Kumar',
+                abstract: 'This paper presents novel algorithms for optimizing complex trajectories for interplanetary missions, considering gravitational assists, thrust constraints, and rendezvous maneuvers.',
+                keywords: 'Trajectory Optimization, Interplanetary, Space Mission, Gravitational Assist',
+                topic: 'Space Systems and Technologies',
+                status: 'Rejected',
+                date: '2025-06-05',
+                reviews: [
+                    { reviewer: 'Dr. Alok Verma', status: 'Completed', rating: 2, comments: 'The proposed algorithms lack significant improvement over existing methods. More rigorous comparison is needed.' }
+                ]
+            },
+            {
+                id: 'RARF25-015',
+                title: 'Aerodynamic Design of Hypersonic Glide Vehicles',
+                authors: 'I. Singh, J. Patel',
+                abstract: 'Investigation into the unique aerodynamic challenges and design considerations for unpowered hypersonic glide vehicles, focusing on lift-to-drag ratio optimization and thermal management.',
+                keywords: 'Hypersonic, Aerodynamics, Glide Vehicle, Thermal Management',
+                topic: 'Aerodynamics and Fluid Mechanics',
+                status: 'Submitted',
+                date: '2025-06-06',
+                reviews: []
+            },
+            {
+                id: 'RARF25-016',
+                title: 'Control Systems for Autonomous Aerial Vehicles',
+                authors: 'K. Nair, L. Menon',
+                abstract: 'Development and testing of robust control algorithms for fully autonomous aerial vehicles, enabling precision navigation and obstacle avoidance in complex urban environments.',
+                keywords: 'Autonomous UAV, Control Systems, Obstacle Avoidance, Urban Air Mobility',
+                topic: 'Flight Mechanics and Control',
+                status: 'Under Review',
+                date: '2025-06-07',
+                reviews: [
+                    { reviewer: 'Ms. Bhavana Das', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Prof. Dinesh Singh', status: 'Completed', rating: 4, comments: 'Strong practical implications. Consider extending to collaborative control.' }
+                ]
+            },
+            {
+                id: 'RARF25-017',
+                title: 'Sustainable Aviation Technologies: A Review',
+                authors: 'M. Das, N. Choudhury',
+                abstract: 'A comprehensive review of emerging technologies aimed at reducing the environmental impact of aviation, from novel propulsion systems to air traffic management improvements.',
+                keywords: 'Sustainable Aviation, Green Technologies, Environmental Impact, Air Traffic Management',
+                topic: 'Sustainable Aviation',
+                status: 'Accepted',
+                date: '2025-06-08',
+                reviews: [
+                    { reviewer: 'Prof. Gayatri Devi', status: 'Completed', rating: 5, comments: 'An excellent and timely review, well-structured and highly informative.' },
+                    { reviewer: 'Dr. Priya A.', status: 'Completed', rating: 4, comments: 'Very useful summary. Could be slightly more critical in some areas.' }
+                ]
+            },
+            {
+                id: 'RARF25-018',
+                title: 'Security Vulnerabilities in Satellite Communication',
+                authors: 'O. Singh, P. Kaur',
+                abstract: 'Analyzing potential cybersecurity vulnerabilities in current and next-generation satellite communication networks and proposing countermeasures to enhance resilience and integrity.',
+                keywords: 'Satellite Communication, Cybersecurity, Network Security, Space Security',
+                topic: 'Aerospace Safety and Security',
+                status: 'Submitted',
+                date: '2025-06-09',
+                reviews: []
+            },
+            {
+                id: 'RARF25-019',
+                title: 'Advanced Manufacturing of Composite Structures',
+                authors: 'Q. Khan, R. Shah',
+                abstract: 'This paper details new manufacturing processes for large-scale composite aerospace structures, focusing on automation, reduced production time, and improved material properties.',
+                keywords: 'Composite Structures, Advanced Manufacturing, Automation, Aerospace',
+                topic: 'Aerospace Manufacturing',
+                status: 'Under Review',
+                date: '2025-06-10',
+                reviews: [
+                    { reviewer: 'Dr. Farhan Ahmed', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Manoj V.', status: 'Completed', rating: 3, comments: 'Decent overview but lacks specific experimental data to support claims.' }
+                ]
+            },
+            {
+                id: 'RARF25-020',
+                title: 'Application of Digital Twins in Aircraft Maintenance',
+                authors: 'S. Kumar, T. Varma',
+                abstract: 'Exploring the integration of digital twin technology for real-time monitoring, anomaly detection, and predictive maintenance scheduling in commercial aircraft fleets.',
+                keywords: 'Digital Twin, Aircraft Maintenance, Real-time Monitoring, Anomaly Detection',
+                topic: 'AI and Machine Learning in Aerospace',
+                status: 'Accepted',
+                date: '2025-06-11',
+                reviews: [
+                    { reviewer: 'Prof. Jaya Kumar', status: 'Completed', rating: 5, comments: 'Highly innovative and practical. Excellent potential for industry adoption.' },
+                    { reviewer: 'Dr. Ishaan Rao', status: 'Completed', rating: 4, comments: 'Well-written and clear. Could add more discussion on data privacy.' }
+                ]
+            },
+            {
+                id: 'RARF25-021',
+                title: 'Hypersonic Propulsion Systems for Future Aerospace Vehicles',
+                authors: 'U. Singh, V. Kohli',
+                abstract: 'This research investigates various hypersonic propulsion concepts, including scramjets and combined cycle engines, their design challenges, and performance characteristics for next-generation aerospace vehicles.',
+                keywords: 'Hypersonic Propulsion, Scramjet, Combined Cycle Engine, Future Aerospace',
+                topic: 'Propulsion and Power',
+                status: 'Submitted',
+                date: '2025-06-12',
+                reviews: []
+            },
+            {
+                id: 'RARF25-022',
+                title: 'Atmospheric Re-entry Dynamics and Heat Transfer',
+                authors: 'W. Das, X. Yadav',
+                abstract: 'Detailed analysis of the complex fluid dynamics and severe aerodynamic heating phenomena experienced by space vehicles during atmospheric re-entry using advanced numerical simulations and experimental data.',
+                keywords: 'Re-entry Dynamics, Heat Transfer, Space Vehicles, Aerodynamics',
+                topic: 'Aerodynamics and Fluid Mechanics',
+                status: 'Under Review',
+                date: '2025-06-13',
+                reviews: [
+                    { reviewer: 'Dr. Alok Verma', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Harish Prasad', status: 'Completed', rating: 3, comments: 'A solid technical paper, but results are largely incremental.' }
+                ]
+            },
+            {
+                id: 'RARF25-023',
+                title: 'Cyber-Physical Security for UAV Systems',
+                authors: 'Y. Gupta, Z. Sharma',
+                abstract: 'Addressing the critical need for robust cyber-physical security in unmanned aerial vehicle (UAV) systems to protect against malicious attacks and ensure safe operation in diverse environments.',
+                keywords: 'UAV Security, Cyber-Physical Systems, Cybersecurity, Drone Security',
+                topic: 'Unmanned Aerial Systems (UAS)',
+                status: 'Submitted',
+                date: '2025-06-14',
+                reviews: []
+            },
+            {
+                id: 'RARF25-024',
+                title: 'Satellite Constellation Design for Global Coverage',
+                authors: 'A. Prakash, B. Jain',
+                abstract: 'Optimizing the orbital parameters and number of satellites for large constellations to provide seamless global communication and earth observation coverage with minimal latency.',
+                keywords: 'Satellite Constellation, Orbital Mechanics, Global Coverage, Communication',
+                topic: 'Space Systems and Technologies',
+                status: 'Under Review',
+                date: '2025-06-15',
+                reviews: [
+                    { reviewer: 'Prof. Sunita Rao', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Omar S.', status: 'Completed', rating: 4, comments: 'Very relevant. Could add more on cost-effectiveness of different designs.' }
+                ]
+            },
+            {
+                id: 'RARF25-025',
+                title: 'Optimal Control of Flexible Spacecraft Structures',
+                authors: 'C. Ghosh, D. Mitra',
+                abstract: 'Developing advanced optimal control strategies to suppress vibrations and maintain precise pointing accuracy in large, flexible spacecraft structures subjected to various disturbances.',
+                keywords: 'Optimal Control, Spacecraft, Flexible Structures, Vibration Suppression',
+                topic: 'Flight Mechanics and Control',
+                status: 'Accepted',
+                date: '2025-06-16',
+                reviews: [
+                    { reviewer: 'Dr. Chetan Sharma', status: 'Completed', rating: 5, comments: 'Outstanding theoretical contribution with clear practical applications. Very well-written.' },
+                    { reviewer: 'Ms. Lakshmi P.', status: 'Completed', rating: 4, comments: 'Strong theoretical background. Consider practical implementation challenges in discussion.' }
+                ]
+            },
+            {
+                id: 'RARF25-026',
+                title: 'Machine Learning for Material Characterization in Aerospace',
+                authors: 'E. Shah, F. Gupta',
+                abstract: 'Application of machine learning algorithms to rapidly characterize properties of novel aerospace materials from experimental data, accelerating material discovery and qualification processes.',
+                keywords: 'Machine Learning, Material Characterization, Aerospace Materials, Materials Discovery',
+                topic: 'Structures and Materials',
+                status: 'Submitted',
+                date: '2025-06-17',
+                reviews: []
+            },
+            {
+                id: 'RARF25-027',
+                title: 'Advancements in Supersonic Aircraft Design',
+                authors: 'G. Balaji, H. Rao',
+                abstract: 'A comprehensive review and new design concepts for the next generation of supersonic commercial aircraft, focusing on sonic boom reduction, fuel efficiency, and environmental impact.',
+                keywords: 'Supersonic Aircraft, Sonic Boom, Aircraft Design, Commercial Aviation',
+                topic: 'Aerodynamics and Fluid Mechanics',
+                status: 'Under Review',
+                date: '2025-06-18',
+                reviews: [
+                    { reviewer: 'Dr. Alok Verma', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Omar S.', status: 'Completed', rating: 4, comments: 'Good overview. Consider adding more recent numerical analysis results if available.' }
+                ]
+            },
+            {
+                id: 'RARF25-028',
+                title: 'Fault Diagnosis in Satellite Subsystems using AI',
+                authors: 'I. Kumar, J. Devi',
+                abstract: 'Development of an AI-based system for autonomous fault detection and diagnosis in complex satellite subsystems, improving mission reliability and reducing operational costs.',
+                keywords: 'Fault Diagnosis, Satellite, AI, Reliability, Spacecraft',
+                topic: 'AI and Machine Learning in Aerospace',
+                status: 'Submitted',
+                date: '2025-06-19',
+                reviews: []
+            },
+            {
+                id: 'RARF25-029',
+                title: 'Modeling and Simulation of Rocket Propulsion Systems',
+                authors: 'K. Singh, L. Pal',
+                abstract: 'Detailed numerical modeling and simulation of liquid and solid rocket propulsion systems, including combustion processes, nozzle performance, and multi-physics interactions.',
+                keywords: 'Rocket Propulsion, Simulation, Modeling, Combustion, Nozzle Design',
+                topic: 'Propulsion and Power',
+                status: 'Under Review',
+                date: '2025-06-20',
+                reviews: [
+                    { reviewer: 'Dr. Karthik N.', status: 'Pending', rating: null, comments: null },
+                    { reviewer: 'Dr. Manoj V.', status: 'Completed', rating: 3, comments: 'Adequate, but could delve deeper into experimental validation aspects.' }
+                ]
+            },
+            {
+                id: 'RARF25-030',
+                title: 'Risk Assessment in Unmanned Aerial Vehicle Operations',
+                authors: 'M. Choudhary, N. Verma',
+                abstract: 'A comprehensive framework for quantitative risk assessment in complex urban and rural environments for unmanned aerial vehicle (UAV) operations, ensuring compliance and public safety.',
+                keywords: 'UAV, Risk Assessment, Safety, Regulations, Unmanned Systems',
+                topic: 'Aerospace Safety and Security',
+                status: 'Accepted',
+                date: '2025-06-21',
+                reviews: [
+                    { reviewer: 'Dr. Esha Gupta', status: 'Completed', rating: 5, comments: 'Extremely well-done, highly relevant to current drone integration challenges.' },
+                    { reviewer: 'Prof. Neha R.', status: 'Completed', rating: 4, comments: 'Practical and insightful. Consider a comparative study with international regulations.' }
+                ]
+            }
+        ];
+
+        // JavaScript to handle section switching and dynamic content display
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.navbar a');
+            const contentSections = document.querySelectorAll('.content-section');
+            const detailViewOverlays = document.querySelectorAll('.detail-view-overlay');
+
+            // Function to show a specific main content section
+            window.loadSection = (sectionId) => {
+                contentSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(sectionId).style.display = 'block';
+
+                // Update active class in navigation
+                navLinks.forEach(link => {
+                    if (link.getAttribute('data-section') === sectionId) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+
+                // Hide any open detail views when switching main sections
+                hideDetailView();
+            };
+
+            // Event listeners for navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('data-section');
+                    loadSection(sectionId);
+                });
+            });
+
+            // Universal function to hide any detail view overlay
+            window.hideDetailView = () => {
+                detailViewOverlays.forEach(overlay => {
+                    overlay.style.display = 'none';
+                });
+            };
+
+            // Function to display Submission Details
+            window.showSubmissionDetails = (submissionId, callerSection) => {
+                const submission = allSubmissions.find(s => s.id === submissionId);
+                if (!submission) {
+                    alert('Submission details not found!');
+                    return;
+                }
+
+                document.getElementById('submissionDetailTitle').textContent = submission.title;
+                document.getElementById('submissionDetailId').textContent = submission.id;
+                document.getElementById('submissionDetailAuthors').textContent = submission.authors;
+                document.getElementById('submissionDetailTopic').textContent = submission.topic;
+
+                const statusBadge = document.getElementById('submissionDetailStatus');
+                statusBadge.textContent = submission.status;
+                statusBadge.className = 'status-badge ' + submission.status.toLowerCase().replace(' ', '-'); // Set class for styling
+
+                document.getElementById('submissionDetailDate').textContent = submission.date;
+                document.getElementById('submissionDetailAbstract').textContent = submission.abstract;
+                document.getElementById('submissionDetailKeywords').textContent = submission.keywords;
+
+                const reviewSection = document.getElementById('submissionReviewSection');
+                const reviewList = document.getElementById('submissionReviewList');
+                reviewList.innerHTML = ''; // Clear previous reviews
+
+                if (submission.reviews && submission.reviews.length > 0) {
+                    reviewSection.style.display = 'block';
+                    submission.reviews.forEach(review => {
+                        const li = document.createElement('li');
+                        let reviewStatusText = review.status;
+                        let reviewStatusClass = review.status.toLowerCase();
+                        if (review.status === 'Completed' && review.rating !== null) {
+                            reviewStatusText += ` (Rating: ${review.rating}/5)`;
+                            reviewStatusClass += ' status-badge ' + (review.rating >= 4 ? 'accepted' : (review.rating >= 3 ? 'under-review' : 'rejected'));
+                        } else {
+                            reviewStatusClass += ' status-badge pending'; // Default for pending/other
+                        }
+
+
+                        li.innerHTML = `<strong>Reviewer:</strong> ${review.reviewer} <span class="status-badge ${reviewStatusClass}">${reviewStatusText}</span>`;
+                        if (review.comments) {
+                            li.innerHTML += `<div class="review-comment"><em>"${review.comments}"</em></div>`;
+                        }
+                        reviewList.appendChild(li);
+                    });
+                } else {
+                    reviewSection.style.display = 'none';
+                }
+
+                document.getElementById('submissionDetailOverlay').style.display = 'flex';
+            };
+
+            // Placeholder for final submission form
+            window.showFinalSubmissionForm = (submissionId) => {
+                alert(`Redirecting to Final Submission Form for Paper ID: ${submissionId}. (Not implemented in this demo)`);
+                // In a real app, this would load a more complex form
+            };
+
+            // Placeholder for editing submission
+            window.editSubmission = (submissionId) => {
+                alert(`Opening editor for Paper ID: ${submissionId}. (Not implemented in this demo)`);
+                // In a real app, this would pre-fill the submission form
+            };
+
+            // Function to display Review Form
+            window.startReview = (assignmentId) => {
+                // Find dummy paper linked to this assignment (for demo purposes)
+                const paper = allSubmissions.find(s => s.id === (assignmentId === 'REV-001' ? 'RARF2025-001' : (assignmentId === 'REV-003' ? 'RARF2025-003' : 'RARF25-011'))); // Simplified mapping
+                if (!paper) {
+                    alert('Paper for this review assignment not found!');
+                    return;
+                }
+
+                document.getElementById('reviewFormPaperTitle').textContent = paper.title;
+                document.getElementById('reviewFormAssignmentId').textContent = assignmentId;
+                document.getElementById('reviewFormDueDate').textContent = '2025-07-15'; // Dummy due date
+
+                document.getElementById('reviewFormOverlay').style.display = 'flex';
+            };
+
+            // Placeholder for viewing completed review
+            window.viewCompletedReview = (assignmentId) => {
+                alert(`Displaying completed review for Assignment ID: ${assignmentId}. (Not implemented in this demo)`);
+                // This would typically load a read-only version of the review form or a summary
+            };
+
+            // Function to display Admin Submission Management
+            window.showAdminSubmissionManagement = (submissionId) => {
+                const submission = allSubmissions.find(s => s.id === submissionId);
+                if (!submission) {
+                    alert('Submission details not found for admin management!');
+                    return;
+                }
+
+                document.getElementById('adminManageSubmissionTitle').textContent = submission.title;
+                document.getElementById('adminManageSubmissionId').textContent = submission.id;
+                document.getElementById('adminManageSubmissionStatus').textContent = submission.status;
+
+                const adminReviewProgressList = document.getElementById('adminReviewProgressList');
+                adminReviewProgressList.innerHTML = ''; // Clear previous
+
+                if (submission.reviews && submission.reviews.length > 0) {
+                    submission.reviews.forEach(review => {
+                        const li = document.createElement('li');
+                        let reviewStatusText = review.status;
+                        let reviewStatusClass = review.status.toLowerCase();
+                        if (review.status === 'Completed') {
+                            reviewStatusText += ` (Rating: ${review.rating}/5)`;
+                            reviewStatusClass += ' success'; // Make completed green
+                        } else {
+                            reviewStatusClass += ' pending'; // Default for pending/other
+                        }
+
+                        li.innerHTML = `Reviewer: ${review.reviewer} <span class="status-badge ${reviewStatusClass}">${reviewStatusText}</span>`;
+                        if (review.status === 'Completed') {
+                            li.innerHTML += `<button class="action-btn view" onclick="alert('View review by ${review.reviewer} for ${submission.id}');" style="margin-left: 10px;">View</button>`;
+                        }
+                        adminReviewProgressList.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = 'No reviews assigned yet.';
+                    adminReviewProgressList.appendChild(li);
+                }
+
+
+                document.getElementById('adminSubmissionManagementOverlay').style.display = 'flex';
+            };
+
+            // Placeholder for admin actions
+            window.assignReviewer = () => {
+                const selectedReviewer = document.getElementById('reviewerSelect').value;
+                const submissionId = document.getElementById('adminManageSubmissionId').textContent;
+                if (selectedReviewer) {
+                    alert(`Reviewer ${selectedReviewer} assigned to ${submissionId}!`);
+                    hideDetailView();
+                } else {
+                    alert('Please select a reviewer.');
+                }
+            };
+            window.finalizeSubmission = (submissionId) => { alert(`Finalizing submission ${submissionId} (e.g., sending acceptance email).`); hideDetailView(); };
+            window.notifyAuthors = (submissionId) => { alert(`Notifying authors of decision for ${submissionId}.`); hideDetailView(); };
+
+
+            // Handle paper submission form (placeholder)
+            const paperSubmissionForm = document.getElementById('paperSubmissionForm');
+            if (paperSubmissionForm) {
+                paperSubmissionForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    // In a real application, this would send data to a backend
+                    alert('Paper submitted successfully to RARF 2025! (This is a demo)');
+                    paperSubmissionForm.reset(); // Clear the form
+                    loadSection('mysubmissions'); // Optionally redirect to submissions page
+                });
+            }
+
+            // Handle review form submission (placeholder)
+            const actualReviewForm = document.getElementById('actualReviewForm');
+            if (actualReviewForm) {
+                actualReviewForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    // In a real application, this would send review data to a backend
+                    alert('Review submitted successfully! (This is a demo)');
+                    actualReviewForm.reset(); // Clear the form
+                    hideDetailView(); // Close the review form
+                    loadSection('review'); // Go back to review panel
+                });
+            }
+
+            // Initial load: show the dashboard
+            loadSection('dashboard');
+        });
+    </script>
+</body>
+
+</html>

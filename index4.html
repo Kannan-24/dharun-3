@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIT Orbital Architect | Advanced Launch System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --rit-maroon: #800000;
+            --rit-gold: #FFD700;
+            --space-black: #050505;
+            --panel-grey: #1a1a1a;
+            --hud-cyan: #00f3ff;
+            --alert-red: #ff3333;
+            --success-green: #33ff33;
+            --font-mono: 'Consolas', 'Monaco', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            background: var(--space-black);
+            color: #ccc;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(90deg, #000 0%, var(--rit-maroon) 100%);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--rit-gold);
+            height: 60px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .brand span {
+            color: var(--rit-gold);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .sys-stat {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-align: right;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: #111;
+            display: flex;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-btn {
+            padding: 15px 25px;
+            background: transparent;
+            border: none;
+            color: #888;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            border-right: 1px solid #222;
+        }
+
+        .nav-btn:hover {
+            background: #222;
+            color: #fff;
+        }
+
+        .nav-btn.active {
+            background: var(--rit-maroon);
+            color: #fff;
+            border-bottom: 3px solid var(--rit-gold);
+        }
+
+        /* MAIN CONTENT AREA */
+        #workspace {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* VAB SCREEN */
+        .vab-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .panel {
+            background: var(--panel-grey);
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            color: var(--rit-gold);
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .rocket-list {
+            list-style: none;
+            padding: 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .rocket-item {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .rocket-item:hover {
+            background: #252525;
+            color: #fff;
+        }
+
+        .rocket-item.selected {
+            background: var(--rit-maroon);
+            color: #fff;
+            border-left: 4px solid var(--rit-gold);
+        }
+
+        .rocket-preview {
+            background: #000;
+            border: 1px dashed #444;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+        }
+
+        /* MISSION CONTROL SCREEN */
+        .mc-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr 350px;
+            grid-template-rows: 1fr 250px;
+            width: 100%;
+            height: 100%;
+            gap: 10px;
+        }
+
+        .monitor {
+            background: #000;
+            border: 2px solid #333;
+            position: relative;
+            overflow: hidden;
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+        }
+
+        #sim-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .telemetry-sidebar {
+            grid-column: 3 / 4;
+            grid-row: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .telemetry-box {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            padding: 10px;
+            font-family: var(--font-mono);
+        }
+
+        .t-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed #222;
+        }
+
+        .t-val {
+            color: var(--hud-cyan);
+            font-weight: bold;
+        }
+
+        .control-deck {
+            grid-column: 1 / 2;
+            grid-row: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .big-btn {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        .btn-launch {
+            background: var(--success-green);
+            color: #000;
+        }
+
+        .btn-launch:hover {
+            background: #2ecc71;
+        }
+
+        .btn-abort {
+            background: var(--alert-red);
+        }
+
+        /* GRAPHS AREA */
+        .graph-deck {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+            background: #111;
+            border-top: 2px solid var(--rit-maroon);
+            display: flex;
+            gap: 5px;
+            padding: 5px;
+            overflow-x: auto;
+        }
+
+        .mini-chart {
+            min-width: 200px;
+            height: 100%;
+            background: #000;
+            border: 1px solid #333;
+        }
+
+        /* DATA ANALYSIS SCREEN */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .chart-card {
+            background: var(--panel-grey);
+            padding: 10px;
+            height: 300px;
+            border-radius: 4px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #000;
+            padding: 5px 20px;
+            font-size: 0.7rem;
+            color: #555;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <h1>Ramaiah Institute of Technology</h1>
+            <span>AEROSPACE SIMULATION LAB | Designed by Dharun M</span>
+        </div>
+        <div class="sys-stat">
+            <div id="clock">UTC 00:00:00</div>
+            <div style="color:var(--success-green)">SYSTEM ONLINE</div>
+        </div>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="setScreen('vab')">1. Vehicle Assembly</button>
+        <button class="nav-btn" onclick="setScreen('mission')">2. Mission Profile</button>
+        <button class="nav-btn" onclick="setScreen('control')">3. Launch Control</button>
+        <button class="nav-btn" onclick="setScreen('analysis')">4. Data Analysis</button>
+    </nav>
+
+    <div id="workspace">
+
+        <div id="vab" class="screen active">
+            <div class="vab-layout">
+                <div class="panel">
+                    <h2>Rocket Database</h2>
+                    <ul class="rocket-list" id="rocket-list">
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h2>Blueprints</h2>
+                    <div class="rocket-preview" id="blueprint-view">
+                        [SELECT A VEHICLE]
+                    </div>
+                </div>
+                <div class="panel">
+                    <h2>Specs</h2>
+                    <div id="spec-sheet" style="font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.6;">
+                        Select a vehicle to view specifications.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mission" class="screen">
+            <div class="panel" style="width: 500px; margin: 0 auto;">
+                <h2>Mission Parameters</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <label>Target Orbit (Altitude km)</label>
+                    <input type="range" min="200" max="36000" step="100" value="400" id="m-orbit" style="width:100%"
+                        oninput="updateMissionUI()">
+                    <span id="val-orbit" style="color:var(--rit-gold)">400 km (LEO)</span>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label>Payload Mass (kg)</label>
+                    <input type="range" min="100" max="50000" step="100" value="2000" id="m-payload" style="width:100%"
+                        oninput="updateMissionUI()">
+                    <span id="val-payload" style="color:var(--rit-gold)">2000 kg</span>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label>Launch Mode</label>
+                    <select id="m-mode"
+                        style="width:100%; padding: 10px; background: #222; color: #fff; border: 1px solid #444;">
+                        <option value="expendable">Expendable (Max Payload)</option>
+                        <option value="reusable">Reusable (Booster Landing)</option>
+                    </select>
+                </div>
+
+                <button class="big-btn" style="background:var(--rit-maroon); width:100%"
+                    onclick="setScreen('control')">PROCEED TO PAD</button>
+            </div>
+        </div>
+
+        <div id="control" class="screen">
+            <div class="mc-layout">
+
+                <div class="control-deck">
+                    <div class="panel">
+                        <h2>Command</h2>
+                        <button class="big-btn btn-launch" id="btn-ignite" onclick="SIM.launch()">IGNITION</button>
+                        <button class="big-btn btn-abort" onclick="SIM.abort()">ABORT</button>
+                        <button class="big-btn" style="background:#444; margin-top:10px; font-size:0.8rem;"
+                            onclick="SIM.reset()">RESET SIM</button>
+                    </div>
+                    <div class="panel" style="flex:1">
+                        <h2>Event Log</h2>
+                        <div id="flight-log"
+                            style="font-family:var(--font-mono); font-size:0.75rem; color:#aaa; overflow-y:auto; height:100%;">
+                            > SYSTEM READY<br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="monitor">
+                    <canvas id="sim-canvas"></canvas>
+                    <div style="position:absolute; top:10px; left:10px; color:var(--alert-red); font-weight:bold; display:none;"
+                        id="rec-indicator">● REC</div>
+                </div>
+
+                <div class="graph-deck">
+                    <div class="mini-chart"><canvas id="live-alt"></canvas></div>
+                    <div class="mini-chart"><canvas id="live-vel"></canvas></div>
+                    <div class="mini-chart"><canvas id="live-acc"></canvas></div>
+                    <div class="mini-chart"><canvas id="live-q"></canvas></div>
+                </div>
+
+                <div class="telemetry-sidebar">
+                    <div class="telemetry-box">
+                        <h3 style="margin:0 0 10px 0; color:var(--rit-gold); border-bottom:1px solid #444;">FLIGHT DATA
+                        </h3>
+                        <div class="t-row"><span>MISSION TIME</span> <span class="t-val" id="tel-time">T- 00:00.0</span>
+                        </div>
+                        <div class="t-row"><span>ALTITUDE</span> <span class="t-val" id="tel-alt">0.0 km</span></div>
+                        <div class="t-row"><span>VELOCITY</span> <span class="t-val" id="tel-vel">0 m/s</span></div>
+                        <div class="t-row"><span>ACCEL (G)</span> <span class="t-val" id="tel-g">0.00 G</span></div>
+                        <div class="t-row"><span>DYN PRESS (Q)</span> <span class="t-val" id="tel-q">0.0 kPa</span>
+                        </div>
+                    </div>
+
+                    <div class="telemetry-box">
+                        <h3 style="margin:0 0 10px 0; color:var(--rit-gold); border-bottom:1px solid #444;">ORBITAL
+                            ELEMENTS</h3>
+                        <div class="t-row"><span>APOAPSIS</span> <span class="t-val" id="tel-apo">0.0 km</span></div>
+                        <div class="t-row"><span>PERIAPSIS</span> <span class="t-val" id="tel-peri">---</span></div>
+                        <div class="t-row"><span>INCLINATION</span> <span class="t-val" id="tel-inc">28.5°</span></div>
+                        <div class="t-row"><span>ECCENTRICITY</span> <span class="t-val" id="tel-ecc">0.000</span></div>
+                    </div>
+
+                    <div class="telemetry-box" style="flex:1">
+                        <h3 style="margin:0 0 10px 0; color:var(--rit-gold); border-bottom:1px solid #444;">VEHICLE
+                            STATUS</h3>
+                        <div class="t-row"><span>STAGE</span> <span class="t-val" id="tel-stage">1</span></div>
+                        <div class="t-row"><span>FUEL</span> <span class="t-val" id="tel-fuel">100%</span></div>
+                        <div class="t-row"><span>ENGINE</span> <span class="t-val" id="tel-eng">OFF</span></div>
+                        <div id="landing-stat"
+                            style="display:none; margin-top:10px; color:var(--rit-gold); border:1px solid var(--rit-gold); padding:5px; text-align:center;">
+                            LANDING MODE ACTIVE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="analysis" class="screen">
+            <h2 style="color:var(--rit-gold)">Post-Flight Telemetry Analysis</h2>
+            <div class="analysis-grid">
+                <div class="chart-card"><canvas id="chart-alt"></canvas></div>
+                <div class="chart-card"><canvas id="chart-vel"></canvas></div>
+                <div class="chart-card"><canvas id="chart-acc"></canvas></div>
+                <div class="chart-card"><canvas id="chart-q"></canvas></div>
+                <div class="chart-card"><canvas id="chart-fuel"></canvas></div>
+                <div class="chart-card"><canvas id="chart-path"></canvas></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        © 2025 Ramaiah Institute of Technology. All Rights Reserved. | Simulator Core v4.5.2 | <span
+            style="color:var(--rit-gold)">Authorized Personnel: Dharun M</span>
+    </footer>
+
+    <script>
+        /**
+         * ============================================================================
+         * RIT ORBITAL ARCHITECT - CORE ENGINE
+         * ============================================================================
+         */
+
+        // --- GLOBAL DATABASE ---
+        const ROCKETS = [
+            { id: 'f9', name: 'Falcon 9 Block 5', manufacturer: 'SpaceX', stages: 2, thrust: 7600, mass: 549, payload: 22, color: '#fff' },
+            { id: 'starship', name: 'Starship / SuperHeavy', manufacturer: 'SpaceX', stages: 2, thrust: 72000, mass: 5000, payload: 150, color: 'silver' },
+            { id: 'pslv', name: 'PSLV-XL', manufacturer: 'ISRO', stages: 4, thrust: 4800, mass: 320, payload: 1.8, color: '#b33939' },
+            { id: 'gslv', name: 'LVM3 (GSLV Mk III)', manufacturer: 'ISRO', stages: 3, thrust: 10000, mass: 640, payload: 8, color: '#d35400' },
+            { id: 'saturn', name: 'Saturn V', manufacturer: 'NASA', stages: 3, thrust: 34000, mass: 2970, payload: 140, color: '#ecf0f1' },
+            { id: 'ariane', name: 'Ariane 5 ECA', manufacturer: 'ESA', stages: 2, thrust: 9600, mass: 777, payload: 21, color: '#3498db' },
+            { id: 'soyuz', name: 'Soyuz-2', manufacturer: 'Roscosmos', stages: 3, thrust: 4100, mass: 312, payload: 8.2, color: '#27ae60' }
+        ];
+
+        // --- APP STATE ---
+        let STATE = {
+            screen: 'vab',
+            selectedRocket: ROCKETS[0],
+            mission: { orbit: 400, payload: 2000, reusable: false }
+        };
+
+        // --- SIMULATOR ENGINE ---
+        const SIM = {
+            active: false,
+            t: 0,
+            dt: 0.1,
+            y: 0,    // Altitude (m)
+            v: 0,    // Velocity (m/s)
+            a: 0,    // Accel (m/s^2)
+            fuel: 100, // %
+            history: [],
+
+            // Physics Config
+            g: 9.81,
+            rho: 1.225,
+
+            // Engine Methods
+            launch: function () {
+                if (this.active) return;
+                this.active = true;
+                this.t = 0;
+                this.y = 0;
+                this.v = 0;
+                this.history = [];
+                log("T-0: IGNITION SEQUENCE START");
+                log("LIFTOFF CONFIRMED");
+                document.getElementById('rec-indicator').style.display = 'block';
+                requestAnimationFrame(SIM.loop);
+            },
+
+            abort: function () {
+                this.active = false;
+                log("MISSION ABORT TRIGGERED", "red");
+                document.getElementById('rec-indicator').style.display = 'none';
+            },
+
+            reset: function () {
+                this.active = false;
+                this.t = 0;
+                this.y = 0;
+                this.v = 0;
+                this.fuel = 100;
+                this.history = [];
+                updateHUD();
+                drawWorld();
+                log("SIMULATION RESET");
+                resetCharts();
+            },
+
+            loop: function () {
+                if (!SIM.active) return;
+
+                // PHYSICS STEP
+                // 1. Calculate Mass (Dry + Fuel + Payload)
+                // Simplified Logic for Demo
+                const rocket = STATE.selectedRocket;
+                const TWR = (rocket.thrust * 1000) / (rocket.mass * 1000 * 9.81); // Thrust to Weight
+
+                // 2. Atmosphere
+                const rho = SIM.rho * Math.exp(-SIM.y / 8500);
+
+                // 3. Forces
+                let thrust = 0;
+                if (SIM.fuel > 0) {
+                    thrust = (rocket.thrust * 1000); // Newtons
+                    // Burn Fuel
+                    SIM.fuel -= 0.1 * (100 / (rocket.stages * 20)); // Arbitrary burn rate
+                } else {
+                    SIM.active = false;
+                    log("MECO: MAIN ENGINE CUTOFF");
+                    log("ORBIT INSERTION COMPLETE");
+                    updateAnalysis();
+                }
+
+                const drag = 0.5 * rho * SIM.v ** 2 * 0.5 * 10; // Fd
+                const gravity = (rocket.mass * 1000) * SIM.g;
+
+                const fNet = thrust - drag - gravity;
+                SIM.a = fNet / (rocket.mass * 1000);
+
+                // 4. Integrate
+                SIM.v += SIM.a * SIM.dt;
+                SIM.y += SIM.v * SIM.dt;
+                SIM.t += SIM.dt;
+
+                // 5. Data Recording (Throttled)
+                if (SIM.t % 0.5 < SIM.dt) {
+                    SIM.history.push({
+                        t: SIM.t,
+                        alt: SIM.y,
+                        vel: SIM.v,
+                        acc: SIM.a,
+                        q: 0.5 * rho * SIM.v ** 2,
+                        fuel: SIM.fuel
+                    });
+                    updateLiveCharts();
+                }
+
+                updateHUD();
+                drawWorld();
+
+                if (SIM.active) requestAnimationFrame(SIM.loop);
+            }
+        };
+
+        // --- UI LOGIC ---
+
+        function init() {
+            // Populate Rocket List
+            const list = document.getElementById('rocket-list');
+            ROCKETS.forEach(r => {
+                const li = document.createElement('li');
+                li.className = 'rocket-item';
+                if (r.id === STATE.selectedRocket.id) li.classList.add('selected');
+                li.innerHTML = `<div><strong>${r.name}</strong><br><span style="font-size:0.7rem; color:#888">${r.manufacturer}</span></div>`;
+                li.onclick = () => selectRocket(r, li);
+                list.appendChild(li);
+            });
+
+            // Start Clock
+            setInterval(() => {
+                document.getElementById('clock').innerText = "UTC " + new Date().toISOString().split('T')[1].split('.')[0];
+            }, 1000);
+
+            selectRocket(ROCKETS[0], list.children[0]);
+            initCharts();
+        }
+
+        function selectRocket(r, el) {
+            STATE.selectedRocket = r;
+            // Update UI
+            document.querySelectorAll('.rocket-item').forEach(i => i.classList.remove('selected'));
+            if (el) el.classList.add('selected');
+
+            // Update Specs
+            document.getElementById('spec-sheet').innerHTML = `
+        <strong style="color:var(--rit-gold); font-size:1.1rem">${r.name}</strong><br>
+        -----------------------------<br>
+        MANUFACTURER: ${r.manufacturer}<br>
+        STAGES      : ${r.stages}<br>
+        LIFTOFF MASS: ${r.mass} tons<br>
+        THRUST      : ${r.thrust} kN<br>
+        LEO PAYLOAD : ${r.payload} tons<br>
+        <br>
+        <span style="color:#888">Configuration loaded into VAB. Ready for integration.</span>
+    `;
+
+            // Draw Preview
+            const bp = document.getElementById('blueprint-view');
+            bp.innerHTML = "";
+            const canvas = document.createElement('canvas');
+            canvas.width = 200; canvas.height = 300;
+            const ctx = canvas.getContext('2d');
+
+            // Draw Simple Rocket
+            ctx.fillStyle = r.color;
+            ctx.fillRect(80, 50, 40, 200);
+            ctx.fillStyle = "#333";
+            ctx.beginPath(); ctx.moveTo(80, 50); ctx.lineTo(100, 10); ctx.lineTo(120, 50); ctx.fill(); // Nose
+            ctx.fillStyle = "#555";
+            ctx.fillRect(70, 230, 10, 30); ctx.fillRect(120, 230, 10, 30); // Fins
+
+            bp.appendChild(canvas);
+        }
+
+        function setScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (id === 'control') {
+                resizeSimCanvas();
+            }
+            if (id === 'analysis') {
+                updateAnalysis();
+            }
+        }
+
+        function updateMissionUI() {
+            STATE.mission.orbit = document.getElementById('m-orbit').value;
+            STATE.mission.payload = document.getElementById('m-payload').value;
+            document.getElementById('val-orbit').innerText = STATE.mission.orbit + " km";
+            document.getElementById('val-payload').innerText = STATE.mission.payload + " kg";
+        }
+
+        function log(msg, color = "#aaa") {
+            const logDiv = document.getElementById('flight-log');
+            const time = SIM.t.toFixed(1);
+            logDiv.innerHTML = `<div style="color:${color}; border-bottom:1px solid #222; margin-bottom:2px;">[T+${time}] ${msg}</div>` + logDiv.innerHTML;
+        }
+
+        // --- VISUALIZATION & CHARTS ---
+
+        let chartInstances = {};
+
+        function initCharts() {
+            // Helper to create charts
+            const create = (id, label, color) => {
+                const ctx = document.getElementById(id).getContext('2d');
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: [], datasets: [{ label: label, data: [], borderColor: color, borderWidth: 1, pointRadius: 0 }] },
+                    options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { x: { display: false }, y: { grid: { color: '#222' } } }, plugins: { legend: { display: false }, title: { display: true, text: label, color: '#666', font: { size: 10 } } } }
+                });
+            };
+
+            // Live Charts
+            chartInstances.liveAlt = create('live-alt', 'ALTITUDE', '#00f3ff');
+            chartInstances.liveVel = create('live-vel', 'VELOCITY', '#00ff00');
+            chartInstances.liveAcc = create('live-acc', 'ACCEL', '#ffff00');
+            chartInstances.liveQ = create('live-q', 'DYN PRESS', '#ff0000');
+        }
+
+        function updateLiveCharts() {
+            if (SIM.history.length === 0) return;
+            const pt = SIM.history[SIM.history.length - 1];
+            const lbl = pt.t.toFixed(1);
+
+            // Add Data
+            ['liveAlt', 'liveVel', 'liveAcc', 'liveQ'].forEach((k, i) => {
+                const chart = chartInstances[k];
+                const keys = ['alt', 'vel', 'acc', 'q'];
+                chart.data.labels.push(lbl);
+                chart.data.datasets[0].data.push(pt[keys[i]]);
+
+                // Keep window small
+                if (chart.data.labels.length > 50) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                }
+                chart.update();
+            });
+        }
+
+        function resetCharts() {
+            Object.values(chartInstances).forEach(c => {
+                c.data.labels = [];
+                c.data.datasets[0].data = [];
+                c.update();
+            });
+        }
+
+        function updateHUD() {
+            document.getElementById('tel-time').innerText = "T+ " + SIM.t.toFixed(1);
+            document.getElementById('tel-alt').innerText = (SIM.y / 1000).toFixed(2) + " km";
+            document.getElementById('tel-vel').innerText = SIM.v.toFixed(0) + " m/s";
+            document.getElementById('tel-g').innerText = (SIM.a / 9.81).toFixed(2) + " G";
+            document.getElementById('tel-fuel').innerText = SIM.fuel.toFixed(1) + " %";
+
+            // Orbital Calcs
+            const r = 6371000 + SIM.y;
+            const v = SIM.v;
+            const mu = 3.986e14;
+            const E = (v * v) / 2 - mu / r;
+            const sma = -mu / (2 * E);
+            // Simplified Apoapsis for vertical launch
+            const apo = (E < 0) ? (sma * (1 + 0.1) - 6371000) : 0; // Fake ecc
+            document.getElementById('tel-apo').innerText = (apo / 1000).toFixed(1) + " km";
+        }
+
+        function drawWorld() {
+            const c = document.getElementById('sim-canvas');
+            const ctx = c.getContext('2d');
+            const w = c.width;
+            const h = c.height;
+
+            // Sky Color
+            let bg = [0, 0, 0];
+            if (SIM.y < 50000) {
+                // Fade from blue to black
+                const f = 1 - (SIM.y / 50000);
+                bg = [20 * f, 20 * f, 50 * f];
+            }
+            ctx.fillStyle = `rgb(${bg[0]},${bg[1]},${bg[2]})`;
+            ctx.fillRect(0, 0, w, h);
+
+            // Earth Curve
+            const rEarth = 6371 * 10; // Scaled down for visual
+            const scale = Math.max(0.1, 1 - (SIM.y / 200000));
+
+            ctx.save();
+            ctx.translate(w / 2, h - 50 + (SIM.y * 0.05 * scale));
+
+            // Draw Earth
+            ctx.beginPath();
+            ctx.arc(0, rEarth, rEarth, 0, Math.PI * 2);
+            ctx.fillStyle = "#1e3799";
+            ctx.fill();
+            ctx.strokeStyle = "#4a69bd";
+            ctx.lineWidth = 5;
+            ctx.stroke();
+
+            // Launch Pad
+            ctx.fillStyle = "#555";
+            ctx.fillRect(-20, -10, 40, 10);
+
+            ctx.restore();
+
+            // Rocket
+            const rocketY = h - 100;
+            ctx.save();
+            ctx.translate(w / 2, rocketY);
+
+            // Flame
+            if (SIM.active && SIM.fuel > 0) {
+                ctx.fillStyle = `rgba(255, ${Math.random() * 200}, 0, 0.8)`;
+                ctx.beginPath();
+                ctx.moveTo(-5, 20); ctx.lineTo(0, 20 + Math.random() * 50); ctx.lineTo(5, 20);
+                ctx.fill();
+            }
+
+            // Body
+            ctx.fillStyle = STATE.selectedRocket.color;
+            ctx.fillRect(-8, -20, 16, 40);
+            // Fins
+            ctx.fillStyle = "#333";
+            ctx.beginPath(); ctx.moveTo(-8, 10); ctx.lineTo(-15, 20); ctx.lineTo(-8, 20); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(8, 10); ctx.lineTo(15, 20); ctx.lineTo(8, 20); ctx.fill();
+            // Nose
+            ctx.beginPath(); ctx.moveTo(-8, -20); ctx.lineTo(0, -35); ctx.lineTo(8, -20); ctx.fill();
+
+            ctx.restore();
+        }
+
+        function resizeSimCanvas() {
+            const c = document.getElementById('sim-canvas');
+            c.width = c.parentElement.offsetWidth;
+            c.height = c.parentElement.offsetHeight;
+        }
+
+        // --- ANALYSIS LOGIC ---
+        function updateAnalysis() {
+            if (SIM.history.length === 0) return;
+
+            // Destroy old charts in analysis tab if needed (simplified here)
+            // In real app, manage Chart instances strictly.
+
+            const createFull = (id, label, key, color) => {
+                const ctx = document.getElementById(id).getContext('2d');
+                // Check if chart exists
+                // (Skipped for brevity, assume fresh draw or overwrite)
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: SIM.history.map(p => p.t.toFixed(0)),
+                        datasets: [{ label: label, data: SIM.history.map(p => p[key]), borderColor: color, backgroundColor: color + '33', fill: true }]
+                    },
+                    options: { responsive: true, plugins: { title: { display: true, text: label } } }
+                });
+            };
+
+            createFull('chart-alt', 'Altitude Profile (m)', 'alt', '#3498db');
+            createFull('chart-vel', 'Velocity Curve (m/s)', 'vel', '#2ecc71');
+            createFull('chart-acc', 'Acceleration (G)', 'acc', '#f1c40f');
+            createFull('chart-q', 'Dynamic Pressure (Pa)', 'q', '#e74c3c');
+            createFull('chart-fuel', 'Fuel Consumption (%)', 'fuel', '#9b59b6');
+            // Path chart would require X/Y data
+        }
+
+        window.onload = init;
+        window.onresize = resizeSimCanvas;
+
+    </script>
+</body>
+
+</html>

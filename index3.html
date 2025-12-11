@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIT Mission Control | Advanced Flight Simulator</title>
+    <style>
+        /* --- CORE THEME: AEROSPACE DARK --- */
+        :root {
+            --bg: #050505;
+            --panel: #141414;
+            --rit-primary: #800000;
+            /* Maroon for RIT */
+            --rit-accent: #f1c40f;
+            /* Gold/Yellow accent */
+            --hud-text: #00ffcc;
+            --text: #e0e0e0;
+            --font-mono: 'Courier New', Courier, monospace;
+            --font-ui: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-ui);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- HEADER (BRANDING) --- */
+        header {
+            background: #000;
+            border-bottom: 3px solid var(--rit-primary);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            z-index: 10;
+        }
+
+        .brand-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .company-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .company-sub {
+            font-size: 0.7rem;
+            color: var(--rit-accent);
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .sys-info {
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .sys-time {
+            color: var(--hud-text);
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .mission-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* LEFT PANEL: CONFIG & CONTROLS */
+        .control-panel {
+            width: 320px;
+            background: var(--panel);
+            border-right: 1px solid #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        h2 {
+            font-size: 0.9rem;
+            color: var(--rit-accent);
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        input[type="range"],
+        input[type="number"],
+        select {
+            width: 100%;
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            font-family: var(--font-mono);
+        }
+
+        input[type="range"] {
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .btn-launch {
+            background: var(--rit-primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.2s;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(128, 0, 0, 0.4);
+        }
+
+        .btn-launch:hover {
+            background: #a00000;
+        }
+
+        .btn-reset {
+            background: #333;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            padding: 10px;
+        }
+
+        /* CENTER: VISUALIZATION */
+        .viewport {
+            flex: 1;
+            position: relative;
+            background: black;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* HUD OVERLAY */
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 280px;
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid #333;
+            padding: 15px;
+            font-family: var(--font-mono);
+            border-left: 4px solid var(--rit-accent);
+            pointer-events: none;
+        }
+
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .hud-val {
+            color: var(--hud-text);
+            font-weight: bold;
+        }
+
+        .status-badge {
+            text-align: center;
+            background: #222;
+            color: #fff;
+            padding: 5px;
+            margin-bottom: 10px;
+            border-radius: 2px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* RIGHT PANEL: DATA & LOGS */
+        .data-panel {
+            width: 300px;
+            background: var(--panel);
+            border-left: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-window {
+            flex: 1;
+            background: #000;
+            margin: 10px;
+            border: 1px solid #333;
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            overflow-y: auto;
+            color: #bbb;
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            border-bottom: 1px solid #111;
+            padding-bottom: 2px;
+        }
+
+        .log-ts {
+            color: var(--rit-accent);
+            margin-right: 5px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #111;
+            padding: 5px 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #555;
+            border-top: 1px solid #222;
+        }
+
+        .designer-credit {
+            color: #888;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand-box">
+            <div class="company-name">Ramaiah Institute of Technology</div>
+            <div class="company-sub">AEROSPACE SIMULATION LAB</div>
+        </div>
+        <div class="sys-info">
+            <div>SYSTEM STATUS: <span style="color:#0f0">ONLINE</span></div>
+            <div class="sys-time" id="clock">00:00:00 UTC</div>
+            <div id="geo-loc">LOC: 12.97°N, 77.59°E</div>
+        </div>
+    </header>
+
+    <div class="mission-container">
+
+        <div class="control-panel">
+            <h2>Mission Configuration</h2>
+
+            <div class="input-group">
+                <label>PAYLOAD MASS (kg)</label>
+                <input type="range" id="cfg-payload" min="500" max="10000" step="100" value="2000" oninput="updateUI()">
+                <div style="text-align:right; color:var(--rit-accent)" id="val-payload">2000 kg</div>
+            </div>
+
+            <div class="input-group">
+                <label>TARGET ORBIT (km)</label>
+                <input type="range" id="cfg-orbit" min="200" max="1000" step="10" value="400" oninput="updateUI()">
+                <div style="text-align:right; color:var(--rit-accent)" id="val-orbit">400 km</div>
+            </div>
+
+            <div class="input-group">
+                <label>LAUNCH VEHICLE</label>
+                <select id="cfg-vehicle">
+                    <option value="pslv">RIT-X1 (Polar Satellite LV)</option>
+                    <option value="gslv">RIT-Heavy (Geosynchronous LV)</option>
+                    <option value="hls">RIT-Star (Heavy Lift System)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>LAUNCH AZIMUTH (deg)</label>
+                <input type="number" id="cfg-azi" value="90" min="0" max="360">
+            </div>
+
+            <h2>Simulation Control</h2>
+            <button class="btn-launch" id="btn-action" onclick="toggleSim()">INITIATE LAUNCH</button>
+            <button class="btn-launch btn-reset" onclick="resetSim()">RESET SYSTEMS</button>
+        </div>
+
+        <div class="viewport">
+            <canvas id="sim-canvas"></canvas>
+
+            <div class="hud">
+                <div class="status-badge" id="hud-status">READY TO LAUNCH</div>
+                <div class="hud-row"><span>ALTITUDE</span> <span class="hud-val" id="hud-alt">0.0 km</span></div>
+                <div class="hud-row"><span>VELOCITY</span> <span class="hud-val" id="hud-vel">0 m/s</span></div>
+                <div class="hud-row"><span>DOWNRANGE</span> <span class="hud-val" id="hud-range">0.0 km</span></div>
+                <div class="hud-row"><span>DYNAMIC PRESS</span> <span class="hud-val" id="hud-q">0.0 kPa</span></div>
+                <div class="hud-row"><span>APOAPSIS</span> <span class="hud-val" id="hud-apo">0.0 km</span></div>
+                <div class="hud-row"><span>PERIAPSIS</span> <span class="hud-val" id="hud-peri">---</span></div>
+                <div class="hud-row"><span>FUEL (STG 1)</span> <span class="hud-val" id="hud-fuel">100%</span></div>
+            </div>
+        </div>
+
+        <div class="data-panel">
+            <h2 style="margin: 10px;">Mission Log</h2>
+            <div class="log-window" id="mission-log">
+                <div class="log-line"><span class="log-ts">T-00:00</span> Guidance Computer Online.</div>
+                <div class="log-line"><span class="log-ts">T-00:00</span> Waiting for Go-NoGo poll.</div>
+            </div>
+
+            <div style="padding: 10px; border-top:1px solid #333;">
+                <h2 style="margin:0 0 10px 0;">Telemetry Graph</h2>
+                <canvas id="graph-canvas" height="150" style="background:#000; border:1px solid #333;"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        Designed by <span class="designer-credit">Dharun M</span> | © 2025 Ramaiah Institute of Technology
+    </footer>
+
+    <script>
+        /**
+         * ------------------------------------------------------------------
+         * RIT FLIGHT DYNAMICS ENGINE
+         * ------------------------------------------------------------------
+         */
+
+        // --- PHYSICS CONSTANTS ---
+        const G = 6.67430e-11;
+        const M_EARTH = 5.972e24;
+        const R_EARTH = 6371000; // meters
+        const MU = 3.986e14;     // Standard gravitational parameter
+        const RHO_SL = 1.225;    // Sea level air density
+        const SCALE_H = 8500;    // Atmosphere scale height
+
+        // --- VEHICLE DATABASE ---
+        const VEHICLES = {
+            pslv: { name: "RIT-X1", stages: [{ thrust: 4800000, massFuel: 138000, massDry: 10000, isp: 269 }, { thrust: 800000, massFuel: 40000, massDry: 5000, isp: 340 }] },
+            gslv: { name: "RIT-Heavy", stages: [{ thrust: 8000000, massFuel: 400000, massDry: 30000, isp: 290 }, { thrust: 1500000, massFuel: 80000, massDry: 8000, isp: 450 }] },
+            hls: { name: "RIT-Star", stages: [{ thrust: 17000000, massFuel: 1000000, massDry: 80000, isp: 330 }, { thrust: 3000000, massFuel: 200000, massDry: 20000, isp: 380 }] }
+        };
+
+        // --- SIMULATION STATE ---
+        let SIM = {
+            running: false,
+            t: 0,
+            dt: 0.1, // Time step
+            r: { x: 0, y: R_EARTH }, // Position vector (Earth Center is 0,0)
+            v: { x: 0, y: 0 },       // Velocity vector
+            massPayload: 2000,
+            stageIdx: 0,
+            fuelCurrent: 0,
+            vehicle: null,
+            history: []
+        };
+
+        // --- INITIALIZATION ---
+        const cvs = document.getElementById('sim-canvas');
+        const ctx = cvs.getContext('2d');
+        const graphCvs = document.getElementById('graph-canvas');
+        const graphCtx = graphCvs.getContext('2d');
+
+        function init() {
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            resetSim();
+
+            // Clock
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock').innerText = now.toISOString().split('T')[1].split('.')[0] + " UTC";
+            }, 1000);
+
+            // Animation Loop
+            requestAnimationFrame(loop);
+        }
+
+        function resizeCanvas() {
+            cvs.width = cvs.parentElement.offsetWidth;
+            cvs.height = cvs.parentElement.offsetHeight;
+            graphCvs.width = graphCvs.parentElement.offsetWidth;
+            // reset visuals
+            draw();
+        }
+
+        // --- LOGIC ---
+        function updateUI() {
+            const p = document.getElementById('cfg-payload').value;
+            const o = document.getElementById('cfg-orbit').value;
+            SIM.massPayload = parseFloat(p);
+            document.getElementById('val-payload').innerText = p + " kg";
+            document.getElementById('val-orbit').innerText = o + " km";
+        }
+
+        function log(msg) {
+            const box = document.getElementById('mission-log');
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            const ts = SIM.t.toFixed(1);
+            div.innerHTML = `<span class="log-ts">T+${ts}</span> ${msg}`;
+            box.prepend(div);
+        }
+
+        function resetSim() {
+            SIM.running = false;
+            SIM.t = 0;
+            SIM.r = { x: 0, y: R_EARTH }; // Reset to surface
+            SIM.v = { x: 0, y: 0 };       // Still, relative to earth surface (simplified)
+            SIM.stageIdx = 0;
+            SIM.history = [];
+            SIM.vehicle = JSON.parse(JSON.stringify(VEHICLES[document.getElementById('cfg-vehicle').value]));
+            SIM.fuelCurrent = SIM.vehicle.stages[0].massFuel;
+
+            document.getElementById('hud-status').innerText = "READY TO LAUNCH";
+            document.getElementById('hud-status').style.background = "#222";
+            document.getElementById('btn-action').innerText = "INITIATE LAUNCH";
+            document.getElementById('mission-log').innerHTML = "";
+            log("System Reset. Parameters stabilized.");
+            log("Vehicle: " + SIM.vehicle.name + " loaded.");
+            updateHUD();
+            draw();
+        }
+
+        function toggleSim() {
+            if (SIM.running) {
+                SIM.running = false;
+                document.getElementById('btn-action').innerText = "RESUME LAUNCH";
+                log("Simulation PAUSED by user.");
+            } else {
+                if (SIM.t === 0) log("Ignition sequence start... Liftoff!");
+                SIM.running = true;
+                document.getElementById('btn-action').innerText = "PAUSE SIMULATION";
+                document.getElementById('hud-status').innerText = "IN FLIGHT";
+                document.getElementById('hud-status').style.background = "#800000"; // RIT Color
+            }
+        }
+
+        // --- PHYSICS ENGINE ---
+        function loop() {
+            if (SIM.running) {
+                // Run physics steps
+                for (let i = 0; i < 5; i++) stepPhysics(SIM.dt);
+
+                // Update Displays
+                updateHUD();
+                drawGraph();
+            }
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        function stepPhysics(dt) {
+            // 1. Altitude & Vectors
+            const rMag = Math.sqrt(SIM.r.x ** 2 + SIM.r.y ** 2);
+            const alt = rMag - R_EARTH;
+
+            // 2. Atmosphere
+            const rho = (alt < 100000) ? RHO_SL * Math.exp(-alt / SCALE_H) : 0;
+
+            // 3. Guidance (Pitch Program)
+            // Simple gravity turn: Start vertical (90), tilt to horizontal (0) by target altitude
+            const targetAlt = document.getElementById('cfg-orbit').value * 1000;
+            let pitch = Math.PI / 2; // Vertical
+            if (alt > 1000) {
+                let pct = (alt - 1000) / (targetAlt * 0.8);
+                if (pct > 1) pct = 1;
+                pitch = (Math.PI / 2) * (1 - pct); // Linear turn
+            }
+
+            // 4. Forces
+            // Gravity
+            const gMag = MU / (rMag ** 2);
+            const angPos = Math.atan2(SIM.r.y, SIM.r.x);
+            const fGx = -Math.cos(angPos) * gMag;
+            const fGy = -Math.sin(angPos) * gMag;
+
+            // Thrust
+            let thrust = 0;
+            let mass = SIM.massPayload;
+
+            // Add mass of current and future stages
+            for (let i = SIM.stageIdx; i < SIM.vehicle.stages.length; i++) {
+                mass += SIM.vehicle.stages[i].massDry;
+                if (i === SIM.stageIdx) mass += SIM.fuelCurrent;
+                else mass += SIM.vehicle.stages[i].massFuel;
+            }
+
+            if (SIM.stageIdx < SIM.vehicle.stages.length) {
+                const stg = SIM.vehicle.stages[SIM.stageIdx];
+                if (SIM.fuelCurrent > 0) {
+                    thrust = stg.thrust;
+                    const burnRate = stg.thrust / (stg.isp * 9.81);
+                    SIM.fuelCurrent -= burnRate * dt;
+                } else {
+                    // Staging
+                    SIM.stageIdx++;
+                    if (SIM.stageIdx < SIM.vehicle.stages.length) {
+                        SIM.fuelCurrent = SIM.vehicle.stages[SIM.stageIdx].massFuel;
+                        log(`Stage ${SIM.stageIdx} Separation confirmed.`);
+                        log(`Stage ${SIM.stageIdx + 1} Ignition.`);
+                    } else {
+                        log("Main Engine Cutoff (MECO). Orbit Injection.");
+                        document.getElementById('hud-status').innerText = "COASTING";
+                        document.getElementById('hud-status').style.background = "green";
+                    }
+                }
+            }
+
+            // Thrust Vector (Angle = Position Angle + Pitch)
+            // Note: Position Angle is angle FROM center of earth. 
+            // Vertical is along Position Angle. Horizontal is +90 deg from that.
+            // Actually simpler: 
+            // Radial Unit Vector: cos(angPos), sin(angPos)
+            // Tangential Unit Vector: -sin(angPos), cos(angPos) (Counter-clockwise)
+
+            // Pitch 90 deg = Radial
+            // Pitch 0 deg = Tangential
+            const tRad = Math.sin(pitch);
+            const tTan = Math.cos(pitch);
+
+            const fTx = thrust * (Math.cos(angPos) * tRad - Math.sin(angPos) * tTan);
+            const fTy = thrust * (Math.sin(angPos) * tRad + Math.cos(angPos) * tTan);
+
+            // Drag (Simplified)
+            const vMag = Math.sqrt(SIM.v.x ** 2 + SIM.v.y ** 2);
+            let fDx = 0, fDy = 0;
+            if (vMag > 0) {
+                const q = 0.5 * rho * vMag ** 2;
+                const dragA = 10; // area
+                const dragCd = 0.5;
+                const dragF = q * dragA * dragCd;
+                fDx = -dragF * (SIM.v.x / vMag);
+                fDy = -dragF * (SIM.v.y / vMag);
+            }
+
+            // Integration (F=ma)
+            const ax = (fTx + fDx) / mass + fGx;
+            const ay = (fTy + fDy) / mass + fGy;
+
+            SIM.v.x += ax * dt;
+            SIM.v.y += ay * dt;
+            SIM.r.x += SIM.v.x * dt;
+            SIM.r.y += SIM.v.y * dt;
+            SIM.t += dt;
+
+            // Crash check
+            if (alt <= 0 && SIM.t > 5) {
+                SIM.running = false;
+                SIM.r.x = R_EARTH * Math.cos(angPos);
+                SIM.r.y = R_EARTH * Math.sin(angPos); // Snap to surface
+                log("CRITICAL FAILURE: Impact with surface.");
+                document.getElementById('hud-status').innerText = "IMPACT";
+                document.getElementById('hud-status').style.background = "red";
+            }
+
+            // History (throttled)
+            if (SIM.t % 0.5 < dt) {
+                SIM.history.push({ t: SIM.t, alt: alt, vel: vMag });
+                if (SIM.history.length > 200) SIM.history.shift();
+            }
+        }
+
+        // --- VISUALIZATION ---
+        function updateHUD() {
+            const rMag = Math.sqrt(SIM.r.x ** 2 + SIM.r.y ** 2);
+            const alt = rMag - R_EARTH;
+            const vMag = Math.sqrt(SIM.v.x ** 2 + SIM.v.y ** 2);
+
+            // Orbital Elements
+            const vSq = vMag ** 2;
+            const E = vSq / 2 - MU / rMag;
+            const sma = -MU / (2 * E);
+            // H = r x v (2D cross product magnitude)
+            const h = SIM.r.x * SIM.v.y - SIM.r.y * SIM.v.x;
+            const ecc = Math.sqrt(1 + (2 * E * h * h) / (MU * MU));
+
+            const apo = sma * (1 + ecc) - R_EARTH;
+            const peri = sma * (1 - ecc) - R_EARTH;
+
+            // DOM Updates
+            document.getElementById('hud-alt').innerText = (alt / 1000).toFixed(1) + " km";
+            document.getElementById('hud-vel').innerText = vMag.toFixed(0) + " m/s";
+            document.getElementById('hud-apo').innerText = (apo / 1000).toFixed(1) + " km";
+            document.getElementById('hud-peri').innerText = (E < 0) ? (peri / 1000).toFixed(1) + " km" : "Unbound";
+
+            const rho = (alt < 100000) ? RHO_SL * Math.exp(-alt / SCALE_H) : 0;
+            const q = 0.5 * rho * vSq;
+            document.getElementById('hud-q').innerText = (q / 1000).toFixed(1) + " kPa";
+
+            // Fuel Bar
+            if (SIM.stageIdx < SIM.vehicle.stages.length) {
+                const tot = SIM.vehicle.stages[SIM.stageIdx].massFuel;
+                const pct = (SIM.fuelCurrent / tot) * 100;
+                document.getElementById('hud-fuel').innerText = pct.toFixed(1) + "%";
+            } else {
+                document.getElementById('hud-fuel').innerText = "0%";
+            }
+        }
+
+        function draw() {
+            // Clear
+            const w = cvs.width;
+            const h = cvs.height;
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, w, h);
+
+            const rMag = Math.sqrt(SIM.r.x ** 2 + SIM.r.y ** 2);
+            const alt = rMag - R_EARTH;
+
+            // Camera Logic
+            // Center the rocket relative to Earth surface in view
+            // Scale varies: 
+            // Launch: 1px = 100m
+            // Orbit: 1px = 10000m
+            let scale = (h / 2) / (alt + R_EARTH / 20);
+            if (scale > 0.001) scale = 0.001; // Max zoom limit
+            if (alt < 50000) scale = 0.0005; // Launch zoom
+
+            ctx.save();
+            ctx.translate(w / 2, h / 2 + (R_EARTH * scale)); // Move earth center down so surface is at middle
+
+            // Rotate world to keep rocket "up"? No, let's keep inertial frame (Earth fixed)
+            // Draw Earth
+            ctx.beginPath();
+            ctx.arc(0, 0, R_EARTH * scale, 0, Math.PI * 2);
+            ctx.strokeStyle = "#1e90ff";
+            ctx.lineWidth = 2;
+            ctx.fillStyle = "#0a0a20";
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw Grid Lines on Earth
+            ctx.strokeStyle = "rgba(30, 144, 255, 0.2)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, -R_EARTH * scale); ctx.lineTo(0, R_EARTH * scale);
+            ctx.moveTo(-R_EARTH * scale, 0); ctx.lineTo(R_EARTH * scale, 0);
+            ctx.stroke();
+
+            // Draw Rocket
+            const rx = SIM.r.x * scale;
+            const ry = -SIM.r.y * scale; // Canvas Y is down
+
+            ctx.fillStyle = "#fff";
+            const rSize = Math.max(3, 4000 * scale); // Ensure visible
+            ctx.fillRect(rx - rSize / 2, ry - rSize / 2, rSize, rSize);
+
+            // Trail
+            if (SIM.history.length > 1) {
+                ctx.strokeStyle = "var(--rit-accent)";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                // Since history stores Alt/Vel only, we can't draw perfect path in this simple array
+                // In full sim we'd store X/Y. 
+                // Let's just draw a line from surface to current point for visual
+                ctx.moveTo(0, -R_EARTH * scale); // Start roughly at launch site (0, R)
+                ctx.lineTo(rx, ry);
+                // ctx.stroke(); 
+                // The above is inaccurate because the rocket moves around the circle.
+            }
+
+            // Flame
+            if (SIM.running && SIM.fuelCurrent > 0) {
+                ctx.fillStyle = "#f39c12";
+                ctx.beginPath();
+                ctx.arc(rx, ry + rSize, rSize, 0, Math.PI);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function drawGraph() {
+            const w = graphCvs.width;
+            const h = graphCvs.height;
+            const g = graphCtx;
+
+            g.fillStyle = "#111";
+            g.fillRect(0, 0, w, h);
+
+            if (SIM.history.length < 2) return;
+
+            g.strokeStyle = "#00ffcc";
+            g.lineWidth = 2;
+            g.beginPath();
+
+            const maxAlt = Math.max(...SIM.history.map(x => x.alt));
+            const maxT = SIM.history[SIM.history.length - 1].t;
+
+            SIM.history.forEach((pt, i) => {
+                const x = (pt.t / maxT) * w;
+                const y = h - (pt.alt / maxAlt) * h;
+                if (i === 0) g.moveTo(x, y);
+                else g.lineTo(x, y);
+            });
+            g.stroke();
+
+            g.fillStyle = "#fff";
+            g.font = "10px monospace";
+            g.fillText("ALTITUDE vs TIME", 5, 12);
+        }
+
+        // Start
+        init();
+
+    </script>
+</body>
+
+</html>

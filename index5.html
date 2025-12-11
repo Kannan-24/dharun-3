@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramaiah Aerospace Engineering - Official Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Custom styles to enhance Tailwind for the desired aesthetic */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            /* Deep blue to dark gray gradient */
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Playfair Display', serif;
+            color: #fcd34d;
+            /* Gold accent for headings */
+        }
+
+        /* General container styling */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Navbar specific styling */
+        .nav-link:hover {
+            color: #fcd34d;
+            /* Gold on hover */
+            transform: translateY(-2px);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Dropdown menu styling */
+        .dropdown-menu {
+            display: none;
+            /* Hidden by default */
+            position: absolute;
+            background-color: #1a202c;
+            /* Darker background for dropdown */
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            /* Ensure it's above other content */
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid #334155;
+            /* Subtle border */
+            transform-origin: top;
+            animation: fadeInScale 0.3s ease-out forwards;
+            /* Animation for appearance */
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            /* Show on hover */
+        }
+
+        .dropdown-item {
+            color: #cbd5e1;
+            padding: 0.75rem 1rem;
+            display: block;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #2d3748;
+            /* Lighter background on hover */
+            color: #fcd34d;
+            /* Gold text on hover */
+        }
+
+        /* Nested dropdown styling */
+        .nested-dropdown-menu {
+            left: 100%;
+            /* Position to the right of the parent item */
+            top: 0;
+            margin-left: 0.5rem;
+            /* Small gap */
+        }
+
+        .nested-dropdown:hover .nested-dropdown-menu {
+            display: block;
+        }
+
+        /* Hero Section Enhancements */
+        .hero-section {
+            background: url('https://via.placeholder.com/1500x800/0f172a/1e293b?text=Aerospace+Innovation') no-repeat center center/cover;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            /* Dark overlay */
+            z-index: -1;
+        }
+
+        /* Call to Action Button */
+        .btn-primary {
+            background-color: #fcd34d;
+            /* Gold */
+            color: #1a202c;
+            /* Dark text */
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #eab308;
+            /* Darker gold */
+        }
+
+        .btn-secondary {
+            background-color: #334155;
+            /* Darker blue-grey */
+            color: #fcd34d;
+            /* Gold */
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border: 1px solid #fcd34d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #fcd34d;
+            /* Gold */
+            color: #1a202c;
+            /* Dark text */
+        }
+
+        /* Section Specific Styles */
+        .content-section {
+            padding: 4rem 1rem;
+            background-color: #1a202c;
+            /* Slightly lighter than body for contrast */
+            border-top: 1px solid #334155;
+            box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background-color: #2d3748;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-bottom: 3px solid #fcd34d;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        /* News & Events */
+        .news-card {
+            background-color: #2d3748;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-card-content {
+            padding: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0f172a;
+            color: #cbd5e1;
+            padding: 4rem 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        footer a {
+            color: #cbd5e1;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #fcd34d;
+        }
+
+        /* Back to top button */
+        #backToTop {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #fcd34d;
+            color: #1a202c;
+            padding: 0.75rem 1rem;
+            border-radius: 9999px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #backToTop:hover {
+            background-color: #eab308;
+            transform: translateY(-3px);
+        }
+
+        /* Chat UI styles */
+        #chatSection {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background-color: #1a202c;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 2000;
+            transform: translateY(0);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #chatSection.hidden {
+            transform: translateY(calc(100% + 20px));
+            /* Hide off-screen */
+        }
+
+        .chat-header {
+            background-color: #2d3748;
+            color: #fcd34d;
+            padding: 1rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background-color: #1a202c;
+
+            /* Scrollbar styling for Webkit browsers */
+            &::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: #2d3748;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: #fcd34d;
+                border-radius: 4px;
+                border: 2px solid #2d3748;
+            }
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 15px;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message-bubble.sent {
+            background-color: #fcd34d;
+            color: #1a202c;
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-bubble.received {
+            background-color: #334155;
+            color: #e2e8f0;
+            align-self: flex-start;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #334155;
+            background-color: #2d3748;
+        }
+
+        .chat-input-container input {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border-radius: 20px;
+            border: 1px solid #334155;
+            background-color: #1a202c;
+            color: #e2e8f0;
+            margin-right: 0.5rem;
+        }
+
+        .chat-input-container input:focus {
+            outline: none;
+            border-color: #fcd34d;
+        }
+
+        .chat-input-container button {
+            background-color: #fcd34d;
+            color: #1a202c;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-input-container button:hover {
+            background-color: #eab308;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+
+    <header class="bg-gray-800 shadow-lg fixed w-full z-50">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold text-yellow-400 font-playfair">Ramaiah Aerospace</a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#home" class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">Home</a>
+                <a href="#about" class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">About
+                    Us</a>
+                <a href="#programs"
+                    class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">Programs</a>
+                <a href="#research"
+                    class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">Research</a>
+                <a href="#clubs" class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">Clubs</a>
+                <a href="#alumni"
+                    class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">Alumni</a>
+                <a href="#news" class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">News &
+                    Events</a>
+                <a href="#contact"
+                    class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">Contact</a>
+                <a href="#videos"
+                    class="nav-link text-gray-300 hover:text-yellow-400 transition duration-300">Videos</a>
+                <button id="toggleChat" class="btn-secondary flex items-center text-sm py-2 px-4 rounded-full">
+                    <i class="fas fa-comments mr-2"></i> Chat
+                </button>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-300 text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="md:hidden bg-gray-900 px-4 py-2 hidden">
+            <a href="#home" class="block py-2 text-gray-300 hover:text-yellow-400">Home</a>
+            <a href="#about" class="block py-2 text-gray-300 hover:text-yellow-400">About Us</a>
+            <a href="#programs" class="block py-2 text-gray-300 hover:text-yellow-400">Programs</a>
+            <a href="#research" class="block py-2 text-gray-300 hover:text-yellow-400">Research</a>
+            <a href="#clubs" class="block py-2 text-gray-300 hover:text-yellow-400">Clubs</a>
+            <a href="#alumni" class="block py-2 text-gray-300 hover:text-yellow-400">Alumni</a>
+            <a href="#news" class="block py-2 text-gray-300 hover:text-yellow-400">News & Events</a>
+            <a href="#contact" class="block py-2 text-gray-300 hover:text-yellow-400">Contact</a>
+            <a href="#videos" class="block py-2 text-gray-300 hover:text-yellow-400">Videos</a>
+            <button id="toggleChatMobile" class="w-full text-left py-2 px-4 text-gray-300 hover:text-yellow-400">
+                <i class="fas fa-comments mr-2"></i> Chat
+            </button>
+        </div>
+    </header>
+
+    <section id="home" class="hero-section flex items-center justify-center text-center text-white pt-24">
+        <div class="container relative z-10">
+            <h1 class="text-5xl md:text-6xl font-bold font-playfair mb-4 leading-tight">Pioneering the Future of
+                Aerospace Engineering</h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">Innovating flight, exploring space, and
+                shaping the next generation of aerospace leaders.</p>
+            <a href="#about" class="btn-primary text-lg">Discover More</a>
+        </div>
+    </section>
+
+    <main class="flex-grow">
+        <section id="about" class="content-section bg-gray-900 text-gray-100 py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair text-center mb-12">About Ramaiah Aerospace
+                    Engineering</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <p class="text-lg leading-relaxed mb-4">
+                            Welcome to the Department of Aerospace Engineering at Ramaiah Institute of Technology. We
+                            are committed to providing world-class education and fostering groundbreaking research in
+                            the dynamic fields of aviation and space technology. Our curriculum is designed to equip
+                            students with a strong foundation in aerospace principles, coupled with hands-on experience
+                            and exposure to cutting-edge advancements.
+                        </p>
+                        <p class="text-lg leading-relaxed mb-4">
+                            Our esteemed faculty comprises experts with vast academic and industrial experience,
+                            dedicated to nurturing innovation and critical thinking. We boast state-of-the-art
+                            laboratories, advanced simulation facilities, and strong industry collaborations, ensuring
+                            our graduates are well-prepared for successful careers in aerospace and related sectors.
+                        </p>
+                        <a href="#contact" class="btn-secondary text-lg mt-4 inline-block">Join Our Journey</a>
+                    </div>
+                    <div>
+                        <img src="https://via.placeholder.com/600x400/2d3748/fcd34d?text=Aerospace+Lab"
+                            alt="Aerospace Lab"
+                            class="rounded-xl shadow-2xl transform hover:scale-105 transition duration-500 ease-in-out">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="programs" class="content-section bg-gray-800 text-gray-100 py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair text-center mb-12">Our Academic Programs
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="feature-card">
+                        <i class="fas fa-graduation-cap text-yellow-400 text-5xl mb-4"></i>
+                        <h3 class="text-3xl font-bold text-yellow-300 mb-3">Undergraduate (B.E.)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            A comprehensive Bachelor of Engineering program focusing on fundamental and advanced
+                            aerospace concepts, preparing students for diverse roles in the industry.
+                        </p>
+                        <ul class="list-disc list-inside text-gray-400 text-sm mt-4 space-y-1">
+                            <li>Aerodynamics & Flight Mechanics</li>
+                            <li>Aircraft Structures & Design</li>
+                            <li>Propulsion Systems</li>
+                            <li>Avionics & Control Systems</li>
+                        </ul>
+                        <button class="btn-secondary text-sm mt-6">View Curriculum</button>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-rocket text-yellow-400 text-5xl mb-4"></i>
+                        <h3 class="text-3xl font-bold text-yellow-300 mb-3">Postgraduate (M.Tech)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            Specialized Master of Technology programs offering in-depth study and research opportunities
+                            in advanced aerospace domains.
+                        </p>
+                        <ul class="list-disc list-inside text-gray-400 text-sm mt-4 space-y-1">
+                            <li>Aerospace Structures</li>
+                            <li>Propulsion Engineering</li>
+                            <li>Space Technology</li>
+                            <li>UAV Design</li>
+                        </ul>
+                        <button class="btn-secondary text-sm mt-6">Explore Specializations</button>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-flask text-yellow-400 text-5xl mb-4"></i>
+                        <h3 class="text-3xl font-bold text-yellow-300 mb-3">Research Programs (Ph.D.)</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            Doctoral programs fostering innovative research and development, contributing significantly
+                            to the advancement of aerospace science and technology.
+                        </p>
+                        <ul class="list-disc list-inside text-gray-400 text-sm mt-4 space-y-1">
+                            <li>Computational Fluid Dynamics</li>
+                            <li>Advanced Materials</li>
+                            <li>Hypersonic Aerodynamics</li>
+                            <li>Satellite Systems</li>
+                        </ul>
+                        <button class="btn-secondary text-sm mt-6">Research Opportunities</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="research" class="content-section bg-gray-900 text-gray-100 py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair text-center mb-12">Our Cutting-Edge Research
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-b-4 border-yellow-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3 flex items-center"><i
+                                class="fas fa-microchip mr-2"></i>Advanced Computing in Aerospace</h3>
+                        <p class="text-gray-400 mb-4">Focuses on high-performance computing, AI/ML applications in
+                            aerospace design, optimization, and data analysis for complex systems.</p>
+                        <button class="btn-secondary text-sm">Learn More</button>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-b-4 border-red-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3 flex items-center"><i
+                                class="fas fa-wind mr-2"></i>Aerodynamics Research Group</h3>
+                        <p class="text-gray-400 mb-4">Conducts cutting-edge research in high-speed aerodynamics, flow
+                            control, and novel wing designs for future aircraft and aerospace vehicles.</p>
+                        <button class="btn-secondary text-sm">Learn More</button>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-b-4 border-emerald-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3 flex items-center"><i
+                                class="fas fa-satellite mr-2"></i>Avionics & Flight Control Systems Group</h3>
+                        <p class="text-gray-400 mb-4">Focuses on the integration of electronic systems, navigation,
+                            communication, and robust flight control laws for safe and efficient aircraft operation.</p>
+                        <button class="btn-secondary text-sm">Learn More</button>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-b-4 border-indigo-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3 flex items-center"><i
+                                class="fas fa-wrench mr-2"></i>Aircraft Maintenance & Reliability Group</h3>
+                        <p class="text-gray-400 mb-4">Researches advanced maintenance techniques, predictive analytics
+                            for component failure, and reliability engineering to ensure aircraft safety and longevity.
+                        </p>
+                        <button class="btn-secondary text-sm">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="clubs" class="content-section bg-gray-800 text-gray-100 py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair text-center mb-12">Our Dynamic Clubs</h2>
+                <p class="text-lg text-gray-300 leading-relaxed mb-8 text-center">
+                    The Ramaiah Aerospace and Research Forum is home to several vibrant student clubs, each dedicated to
+                    a specialized area of aerospace. These clubs provide practical experience, foster teamwork, and
+                    encourage innovation outside the classroom.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-t-4 border-red-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3 flex items-center"><i
+                                class="fas fa-paper-plane mr-2"></i>Aeromodelling Club</h3>
+                        <p class="text-gray-400 mb-4">Focuses on designing, building, and flying remote-controlled
+                            aircraft. Members learn about aerodynamics, structures, and flight mechanics through
+                            hands-on projects and competitions.</p>
+                        <button class="btn-secondary text-sm">Learn More</button>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-t-4 border-blue-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3 flex items-center"><i
+                                class="fas fa-drone mr-2"></i>UAV Development Team</h3>
+                        <p class="text-gray-400 mb-4">Dedicated to the research, design, and fabrication of unmanned
+                            aerial vehicles for various applications, including surveillance, agriculture, and defense.
+                        </p>
+                        <button class="btn-secondary text-sm">Learn More</button>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-t-4 border-green-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3 flex items-center"><i
+                                class="fas fa-fire mr-2"></i>Propulsion Systems Group</h3>
+                        <p class="text-gray-400 mb-4">Explores advanced propulsion concepts, rocket engine design, and
+                            experimental testing of various thrust-generating systems. Passion for power!</p>
+                        <button class="btn-secondary text-sm">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="alumni" class="content-section bg-gray-900 text-gray-100 py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair text-center mb-12">Our Esteemed Alumni</h2>
+                <p class="text-lg text-gray-300 leading-relaxed mb-8 text-center">
+                    The legacy of Ramaiah Institute of Technology in engineering education spans decades, built on a
+                    foundation of academic rigor and a commitment to societal contribution. The Aerospace Engineering
+                    Department, a proud part of this esteemed institution, continues this tradition by nurturing talent
+                    that shapes the future of aviation and space exploration. Our alumni are testaments to our enduring
+                    impact, excelling in various facets of the aerospace industry, from designing advanced aircraft to
+                    pioneering space missions.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3">Dr. Anya Sharma</h3>
+                        <p class="text-gray-400 mb-2">Chief Engineer, ISRO Satellite Centre</p>
+                        <p class="text-gray-300">Pioneered advanced propulsion systems for Chandrayaan missions.</p>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-l-4 border-emerald-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3">Mr. Vikram Singh</h3>
+                        <p class="text-gray-400 mb-2">Lead Aircraft Designer, Hindustan Aeronautics Ltd.</p>
+                        <p class="text-gray-300">Instrumental in the development of next-generation fighter aircraft.
+                        </p>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-l-4 border-red-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3">Ms. Priya Anand</h3>
+                        <p class="text-gray-400 mb-2">Aerospace Systems Engineer, Boeing</p>
+                        <p class="text-gray-300">Contributed to the avionics systems of commercial airliners.</p>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                        <h3 class="text-2xl text-yellow-300 font-bold mb-3">Dr. Rohan Mehta</h3>
+                        <p class="text-gray-400 mb-2">Professor of Astronautics, MIT</p>
+                        <p class="text-gray-300">Leading research in interstellar propulsion and spacecraft design.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="news" class="content-section bg-gray-800 text-gray-100 py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair text-center mb-12">Latest News & Events</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="news-card">
+                        <img src="https://via.placeholder.com/400x200/4a5568/fcd34d?text=Event+1" alt="Event 1">
+                        <div class="news-card-content">
+                            <h3 class="text-2xl font-bold text-yellow-300 mb-2">Annual Aerospace Symposium 2024</h3>
+                            <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2"></i>October 26,
+                                2024</p>
+                            <p class="text-gray-300 leading-relaxed">Join us for our annual symposium featuring industry
+                                leaders and groundbreaking research presentations.</p>
+                            <a href="#" class="text-yellow-400 hover:underline mt-4 inline-block">Read More <i
+                                    class="fas fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="news-card">
+                        <img src="https://via.placeholder.com/400x200/4a5568/fcd34d?text=News+2" alt="News 2">
+                        <div class="news-card-content">
+                            <h3 class="text-2xl font-bold text-yellow-300 mb-2">Student Team Wins National UAV
+                                Competition</h3>
+                            <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2"></i>September 15,
+                                2024</p>
+                            <p class="text-gray-300 leading-relaxed">Our UAV Development Team secured first place in the
+                                national competition with their innovative drone design.</p>
+                            <a href="#" class="text-yellow-400 hover:underline mt-4 inline-block">Read More <i
+                                    class="fas fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="news-card">
+                        <img src="https://via.placeholder.com/400x200/4a5568/fcd34d?text=News+3" alt="News 3">
+                        <div class="news-card-content">
+                            <h3 class="text-2xl font-bold text-yellow-300 mb-2">New Propulsion Lab Inaugurated</h3>
+                            <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2"></i>August 5, 2024
+                            </p>
+                            <p class="text-gray-300 leading-relaxed">State-of-the-art facility opens to support advanced
+                                research in rocket and jet propulsion systems.</p>
+                            <a href="#" class="text-yellow-400 hover:underline mt-4 inline-block">Read More <i
+                                    class="fas fa-arrow-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="videos" class="content-section bg-gray-900 text-gray-100 py-20">
+            <div class="container mx-auto px-4">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair text-center mb-12">Aerospace Videos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative" style="padding-bottom: 56.25%;"> <video controls
+                                class="absolute top-0 left-0 w-full h-full">
+                                <source src="Skyroot s Vikram I Rocket Unveil _ Launch Animation MAX-Q Inauguration.mp4"
+                                    type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-yellow-300 mb-2">Skyroot's Vikram-I Rocket Unveil &
+                                Launch Animation</h3>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative" style="padding-bottom: 56.25%;">
+                            <video controls class="absolute top-0 left-0 w-full h-full">
+                                <source src="Blast-off! Record 104 Satellites Launched On Indian Rocket _ Video.mp4"
+                                    type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-yellow-300 mb-2">Blast-off! Record 104 Satellites
+                                Launched On Indian Rocket</h3>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative" style="padding-bottom: 56.25%;">
+                            <video controls class="absolute top-0 left-0 w-full h-full">
+                                <source src="Syntropy Aerospace Animations.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-yellow-300 mb-2">Syntropy Aerospace Animations</h3>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative" style="padding-bottom: 56.25%;">
+                            <video controls class="absolute top-0 left-0 w-full h-full">
+                                <source
+                                    src="CGI Animated Trailer _ Anvil Aerospace Hornet F7C from Roberts Space Industries.mp4"
+                                    type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-yellow-300 mb-2">CGI Animated Trailer - Anvil
+                                Aerospace Hornet F7C</h3>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative" style="padding-bottom: 56.25%;">
+                            <video controls class="absolute top-0 left-0 w-full h-full">
+                                <source src="ISRO CHANDRAYAAN-2 (3D ANIMATION).mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-yellow-300 mb-2">ISRO CHANDRAYAAN-2 (3D ANIMATION)
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative" style="padding-bottom: 56.25%;">
+                            <video controls class="absolute top-0 left-0 w-full h-full">
+                                <source src="Indian Space Programme Glimpses_001.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-yellow-300 mb-2">Indian Space Programme Glimpses (Part
+                                1)</h3>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                        <div class="relative" style="padding-bottom: 56.25%;">
+                            <video controls class="absolute top-0 left-0 w-full h-full">
+                                <source src="Indian Space Programme Glimpses_002.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-yellow-300 mb-2">Indian Space Programme Glimpses (Part
+                                2)</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="content-section bg-gray-800 text-gray-100 py-20">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-5xl font-bold text-yellow-400 font-playfair mb-12">Get in Touch</h2>
+                <p class="text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+                    Have questions or want to learn more about our programs and research? Reach out to us! We're always
+                    happy to connect with prospective students, researchers, and industry partners.
+                </p>
+                <div class="flex flex-col md:flex-row justify-center gap-8">
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg flex-1">
+                        <i class="fas fa-map-marker-alt text-yellow-400 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-yellow-300 mb-2">Visit Us</h3>
+                        <p class="text-gray-300">Ramaiah Institute of Technology, Bangalore - 560054, India</p>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg flex-1">
+                        <i class="fas fa-envelope text-yellow-400 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-yellow-300 mb-2">Email Us</h3>
+                        <p class="text-gray-300"><a href="mailto:info@ramaiahaerospace.edu"
+                                class="hover:underline">info@ramaiahaerospace.edu</a></p>
+                    </div>
+                    <div class="bg-gray-700 p-6 rounded-xl shadow-lg flex-1">
+                        <i class="fas fa-phone text-yellow-400 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-yellow-300 mb-2">Call Us</h3>
+                        <p class="text-gray-300">+91 80 2360 0966</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-xl font-bold text-yellow-400 mb-4">Ramaiah Aerospace</h3>
+                <p class="text-sm">Dedicated to excellence in aerospace education and research, fostering future leaders
+                    and innovators.</p>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-yellow-400 mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="#about" class="hover:text-yellow-400 transition duration-200">About Us</a></li>
+                    <li><a href="#programs" class="hover:text-yellow-400 transition duration-200">Programs</a></li>
+                    <li><a href="#research" class="hover:text-yellow-400 transition duration-200">Research</a></li>
+                    <li><a href="#clubs" class="hover:text-yellow-400 transition duration-200">Clubs</a></li>
+                    <li><a href="#news" class="hover:text-yellow-400 transition duration-200">News & Events</a></li>
+                    <li><a href="#contact" class="hover:text-yellow-400 transition duration-200">Contact</a></li>
+                    <li><a href="#videos" class="hover:text-yellow-400 transition duration-200">Videos</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-yellow-400 mb-4">Connect With Us</h3>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-yellow-400 text-2xl"><i
+                            class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-400 text-2xl"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-400 text-2xl"><i
+                            class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-400 text-2xl"><i
+                            class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-yellow-400 mb-4">Newsletter</h3>
+                <p class="text-sm mb-4">Stay updated with our latest news and events.</p>
+                <form action="#" method="POST" class="flex">
+                    <input type="email" placeholder="Your email"
+                        class="p-2 rounded-l-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-yellow-400 text-gray-100 flex-grow">
+                    <button type="submit"
+                        class="bg-yellow-400 text-gray-900 p-2 rounded-r-md hover:bg-yellow-500 transition duration-200">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center text-gray-500 text-sm mt-8">
+            &copy; 2024 Ramaiah Aerospace Engineering. All rights reserved.
+        </div>
+    </footer>
+
+    <button id="backToTop"
+        class="fixed bottom-4 right-4 bg-yellow-400 text-gray-900 p-3 rounded-full shadow-lg hover:bg-yellow-500 focus:outline-none hidden">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div id="chatSection" class="hidden">
+        <div class="chat-header">
+            <span>Chat with Admin Bot</span>
+            <button id="closeChat" class="text-yellow-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message-bubble received">
+                <p class="text-xs text-gray-300 mb-1">Admin Bot</p>Hello! How can I assist you with Ramaiah Aerospace
+                Engineering today?
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="chatInput" placeholder="Type your message..." autocomplete="off">
+            <button id="sendChat">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth Scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Close mobile menu after clicking a link
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // Back to Top Button functionality
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // Show button after scrolling down 300px
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Chat UI functionality
+        const toggleChatButton = document.getElementById('toggleChat');
+        const toggleChatMobileButton = document.getElementById('toggleChatMobile');
+        const chatSection = document.getElementById('chatSection');
+        const closeChatButton = document.getElementById('closeChat');
+        const chatInput = document.getElementById('chatInput');
+        const sendChatButton = document.getElementById('sendChat');
+        const chatMessages = document.getElementById('chatMessages');
+
+        function toggleChatVisibility() {
+            chatSection.classList.toggle('hidden');
+        }
+
+        toggleChatButton.addEventListener('click', toggleChatVisibility);
+        if (toggleChatMobileButton) {
+            toggleChatMobileButton.addEventListener('click', toggleChatVisibility);
+        }
+        closeChatButton.addEventListener('click', toggleChatVisibility);
+
+        sendChatButton.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (messageText !== '') {
+                const messageBubble = document.createElement('div');
+                messageBubble.classList.add('message-bubble', 'sent');
+                messageBubble.innerHTML = `<p class="text-xs text-gray-300 mb-1">You</p>${messageText}`;
+                chatMessages.appendChild(messageBubble);
+                chatInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Auto scroll to bottom
+                // Simulate a reply after a short delay
+                setTimeout(() => {
+                    receiveMessage("Okay, got it! Thanks for sharing.");
+                }, 1500);
+            }
+        }
+        function receiveMessage(text, sender = "Admin Bot") {
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble', 'received');
+            messageBubble.innerHTML = `<p class="text-xs text-gray-300 mb-1">${sender}</p>${text}`;
+            chatMessages.appendChild(messageBubble);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        // Dummy search for notes download (client-side only)
+        const searchNotesInput = document.getElementById('searchNotes');
+        if (searchNotesInput) {
+            searchNotesInput.addEventListener('keyup', function () {
+                const filter = this.value.toLowerCase();
+                const notesItems = document.querySelectorAll('#notesList > div');
+                notesItems.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(filter)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
